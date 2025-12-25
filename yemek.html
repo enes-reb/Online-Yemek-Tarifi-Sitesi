@@ -1,0 +1,2043 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dünya Lezzetleri - Gurme Rehberi</title>
+
+    <!-- Tailwind CSS  -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons  -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* --- ÖZEL STİLLER VE ANİMASYONLAR --- */
+
+        /* Sayfa geçiş animasyonu */
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 0.5s ease-out forwards;
+        }
+
+        /* Arka plan deseni  */
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d97706' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Bayraklar için gölge  */
+        .flag-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Scrollbar  */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .random-btn {
+            padding: 20px 22px;
+            font-size: 15px;
+            background-color: #d46c27;
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transform: translateY(-45px); 
+    
+    
+        }
+
+
+        .random-btn:hover {
+            background-color: #e47839;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #ffffff;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c45e1b;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen font-sans text-gray-800 relative overflow-x-hidden bg-orange-50">
+
+    <!-- --- ARKA PLAN EFEKTLERİ --- -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <!-- Ana Renk -->
+        <div class="absolute inset-0 bg-orange-50 opacity-90"></div>
+        <!-- Desen -->
+        <div class="absolute inset-0 opacity-10 bg-pattern"></div>
+        <!-- Bulanık Renkli Toplar  -->
+        <div
+            class="absolute top-0 left-0 w-64 h-64 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse">
+        </div>
+        <div
+            class="absolute bottom-0 right-0 w-64 h-64 bg-red-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse">
+        </div>
+    </div>
+
+    <!-- --- ANA İÇERİK ALANI --- -->
+    <div class="relative z-10 max-w-6xl mx-auto px-4 py-8">
+
+        <!-- HEADER  -->
+        <header class="flex justify-between items-center mb-12">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="goHome()">
+                <div class="bg-orange-500 p-3 rounded-full shadow-lg group-hover:scale-110 transition-transform">
+                    <i data-lucide="chef-hat" class="text-white w-8 h-8"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-orange-900 tracking-tight">
+                    Dünya<span class="text-orange-600">Lezzetleri</span>
+                </h1>
+            </div>
+
+            <!-- Geri Dön Butonu -->
+            <button id="back-btn" onclick="goBack()"
+                class="hidden flex items-center gap-2 px-5 py-2 bg-white rounded-full shadow-md hover:bg-orange-100 transition-colors text-orange-800 font-hard">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                Geri Dön
+            </button>
+        </header>
+
+        <!-- DİNAMİK İÇERİK  -->
+        <main id="app-container">
+            
+        </main>
+
+    </div>
+
+    <!-- --- JAVASCRIPT KODLARI --- -->
+    <script>
+        //  (Ülkeler ve Yemekler) 
+        const countriesData = [
+            {
+                id: 'tr',
+                name: 'Türkiye',
+                coverImage: 'https://www.imamcagdas.com/normal-baklava-27-baklavalar-imam-cagdas-273-27-O.jpg',
+                dishes: [
+                    {
+                        id: 'tr1',
+                        name: 'İskender Kebap',
+                        description: 'Tereyağlı, domates soslu ve yoğurtlu döner kebap efsanesi.',
+                        image: 'https://images.deliveryhero.io/image/fd-tr/LH/gowy-listing.jpg',
+                        time: '45 dk',
+                        servings: '2 Kişilik',
+                        calories: '850 kcal',
+                        ingredients: ['500g Döner eti', '2 adet tırnak pide', '2 yemek kaşığı tereyağı', '1 kase yoğurt', 'Domates sosu'],
+                        recipe: ['Pideleri küp küp doğrayıp hafifçe ısıtın.', 'Üzerine döner etlerini yerleştirin.', 'Hazırladığınız sıcak domates sosunu etlerin üzerine gezdirin.', 'Tereyağını köpürünceye kadar kızdırıp en üste dökün.', 'Yanında yoğurt ve közlenmiş biber ile servis yapın.']
+                    },
+                    {
+                        id: 'tr2',
+                        name: 'Baklava',
+                        description: 'İncecik yufkalar arasına serpilmiş fıstıkla yapılan şerbetli tatlı.',
+                        image: 'https://www.imamcagdas.com/normal-baklava-27-baklavalar-imam-cagdas-273-27-O.jpg',
+                        time: '120 dk',
+                        servings: '1 Tepsi',
+                        calories: '450 kcal/dilim',
+                        ingredients: ['40 yaprak baklavalık yufka', '300g Antep fıstığı', '250g Tereyağı', 'Şerbeti için: 3 su bardağı şeker, 3 su bardağı su'],
+                        recipe: ['Yufkaları tepsiye dizerken her kata eritilmiş tereyağı sürün.', 'Orta kata bolca fıstık serpin.', 'Kalan yufkaları da yağlayarak dizin ve dilediğiniz şekilde kesin.', '180 derece fırında nar gibi kızarana kadar pişirin.', 'Sıcak baklavaya ılık şerbeti dökün.']
+                    },
+
+                    {
+                        id: 'tr3',
+                        name: 'Adana Kebap',
+                        description: 'Zırhtan geçirilip kıyma haline getirilen etin nihai noktalarından biri .',
+                        image: 'https://gastromanya.com/wp-content/uploads/2016/09/759078_o62f8.jpg',
+                        time: '15 dk',
+                        servings: '2 Kişilik ',
+                        calories: '215 kcal/dilim',
+                        ingredients: ['500 gr kıyma', '1 adet soğan', '100 gr kuyruk yağı ya da iki yemek kaşığı tereyağ', '2 diş sarımsak, 1 adet kapya biber', 'Tuz, karabiber, isteğe bağlı pul biber de koyabilirsiniz'],
+                        recipe: ['Eti zırhtan geçirerek kıyma formuna getirelim', 'Aynı şekilde diğer bileşenleride zırhtan geçirelim .', 'Zırhtan geçirdiğimiz et ve diğer bileşenleri birleştirelim.', 'Ardından şişe geçirerek pişirelim.']
+                    },
+
+                    {
+                        id: 'tr4',
+                        name: 'Yaprak Sarma',
+                        description: 'Asma yaprağının içerisine bulgur ya da pirinç konularak yapılan Türk yemeği .',
+                        image: 'https://static.ticimax.cloud/60168/uploads/urunresimleri/buyuk/zeytinyagli-yaprak-sarmasi--4e2a-.png',
+                        time: '35 dk',
+                        servings: '6 Kişilik ',
+                        calories: '239 kcal/dilim',
+                        ingredients: ['500 gram tokat yaprağı (salamura)', 'Zeytin Yağı ', ' 1 adet limon, 2 orta boy kuru soğan',' 1,5 su bardağı pirinç.', 'Tuz, karabiber, isteğe bağlı pul biber de koyabilirsiniz'],
+                        recipe: ['Öncelikle salamura yapraklar 2-3 dakika sıcak suda bekletilir, yıkanır ve süzgece alınır', 'Geniş bir kabın içerisine soğanlar rendelenir, Üzerine zeytinyağı dökülür', 'Baha ratlar,salça ve tuzu da ilave edildikten sonra ince kıyılmış maydanoz da ekleyerek karıştırılır.',
+                          'Yaprağın geniş kısmına iç harçtan konulur ve rulo gibi iki yanlardan kapatarak sarılır. Bu işleme yaprak bitene kadar devam edilir.', 'Ardından tencereye dıizillir ve pişirilir ']
+                    
+                    
+                    
+                    
+                    },
+
+                    {
+                        id: 'tr5',
+                        name: 'Et Döner',
+                        description: ' Dövülmüş et parçalarının, bir şişin üzerine geçirilerek, dik bir şekilde asıldıkları odun ateşi karşısında pişirildiği, Türk mutfağına özgü bir yemektir..',
+                        image: 'https://saraylidoner.com/wp-content/uploads/2021/09/durum-doner.jpg',
+                        time: '35dk',
+                        servings: '4 Kişilik ',
+                        calories: '270 kcal/dilim',
+                        ingredients: [' 1 kg büyük parçalar halinde dana eti', '1 adet küçük boy soğan,', ' 1 tatlı kaşığı yoğurt,', ' 1 tatlı kaşığı domates salçası,1 yemek kaşığı sirke (herhangi bir çeşit),', 'Tuz, karabiber, 1 çay kaşığı kekik,',' 1 tepeleme yemek kaşığı tereyağı.'],
+                        recipe: [' Soğanı rendeleyin', ' İçine yoğurt, salça, sirke, kekik, tuz ve zeytinyağını ekleyip karıştırın,.', ' İçine et parçalarını ekleyip bütün parçalar sosa bulanana kadar karıştırın', ' Parçaları büyük bir parça streç filmin üzerine alıp kalın bir şerit halinde sarın.','Dondurucuya kaldırıp 5-6 saat dinlendirin,',' Eti dondurucudan çıkarıp büyük ve keskin bir bıçakla incecik kıyın','Geniş bir tavada tereyağını eritip et dilimlerini tavaya alın ve harlı ateşte sürekli karıştırarak suyunu salıp çekene ve hafifçe kızarana kadar kavurun.']
+                    },
+
+                    {
+                        id: 'tr6',
+                        name: 'Lahmacun',
+                        description: 'İncecik,çıtır hamurun üzerine serilmiş kıymalı harç.',
+                        image: 'https://cdn.dsmcdn.com/mrktng/seo/22agustos9/lahmacun-tarifi.jpg',
+                        time: '25 dk',
+                        servings: '3 Kişilik ',
+                        calories: '309 kcal/dilim',
+                        ingredients: ['500 gr kıyma', '1 adet soğan', ' 700 gr un (yaklaşık 6-6,5 su bardağı)', '2 diş sarımsak, 1 adet kapya biber', ' 2 adet kabukları soyulup, rendelenmiş domates,2 yemek kaşığı dolusu biber salçası','2 avuç dolusu maydanoz (çok ince kıyılmış)','Tuz, karabiber, isteğe bağlı pul biber de koyabilirsiniz'],
+                        recipe: [' Hamur için ılık su, süt ve şekeri yoğurma kabına alıyoruz.', ' Ardından mayayı da ilave ederek, mayanın erimesi için 5-10 dk bekletiyoruz .', 'Yağ, tuz ve yavaş un ilavesiyle, hamuru yumuşak olmayacak ve ele yapışmayacak şekilde yoğuruyoruz.', 'Üzerini kapatarak 1 saat mayalanmaya bırakıyoruz.','Hamur mayalanırken bizde ayrı kapta lahmacunun kıymalı harcını hazırlıyoruz.','Kıymamızın üzerine, çok ince kıydığımız soğan, biber ve sarımsağı koyuyoruz',' Ayrı bir kaba domatesi rendeliyoruz ve üzerine 2 yemek kaşığı biber salçamızı ilave edip, çok iyi bir şekilde karıştırıyoruz',' Ve bu sosu da kıymalı harcımızın üzerine boşaltıyoruz','En son yağını, baharatlarını ve tuzunu ilave edip, çok iyi yoğuruyoruz',' Hamur mayalandıktan sonra avuç içi kadar bezelere ayırıyoruz','Bezelerin altına üzerine un serperek incecik açıyoruz',' Üzerine 2 kaşık kadar kıymalı harcı yayıyoruz ve ısıtılmış 200 derece fırında yaklaşık 5-6 dk pişiriyoruz','Yada yanmaz tava veya pizza tavasında, üzerine kapak örterek 5 dk kadar pişiriyoruz. Hazırlarını aratmayacak kadar lezzetli:)']
+
+                   
+                    },
+
+
+                    {
+                        id: 'tr7',
+                        name: 'Karnıyarık ',
+                        description: 'Türk mutfağının belli başlı patlıcan yemeklerinden biridir.',
+                        image: 'https://d17wu0fn6x6rgz.cloudfront.net/img/w/tarif/mgt/frnda-karnyark-313.webp',
+                        time: '50dk',
+                        servings: '4 Kişilik ',
+                        calories: '97 kcal/dilim',
+                        ingredients: ['500 gr kıyma', '1 adet soğan', ' 2 adet domates, 2 adet sivri biber', '2 diş sarımsak', 'Tuz, karabiber.'],
+                        recipe: [' Patlıcanları çizgili soyup, yarım saat yağ çekmemesi için tuzlu suda bekletin.', ' İyice yıkadıktan sonra suyunu havlu ile çektirin ve az yağda kızartın. 3 adet biberi de yağda kızartın.', ' Daha sonra aynı tavada doğranmış soğanları kavurun, kıymayı ekleyerek bir müddet daha kavurun,ve biberleri, sarımsağı ekleyerek 2 dakika daha kavurun.', ' Tepsiye patlıcanların ortalarını keserek yerleştirin ve bu kesiklerden patlıcanın içine bastırarak iç malzemesine yer açın ve malzeme ile patlıcanları doldurun.','Ardından fırına atarak pişirelim']
+                    },
+
+                    {
+                        id: 'tr8',
+                        name: 'Mantı',
+                        description: 'Çeşitli baharatlarla çeşnilendirilen kıymanın, küçük hamur parçalarının içine konulması ve bu hamur parçalarının suda haşlanması ile yapılan yemektir.',
+                        image: 'https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480_1_5x/img/recipe/ras/Assets/e6ec567b4de47816557b45c4247cc323/Derivates/6dbac756f10d372c8a556b9ef923a5c4f4134eee.jpg',
+                        time: '60 dk',
+                        servings: '3 Kişilik ',
+                        calories: '215 kcal/dilim',
+                        ingredients: [' 3 su bardağı un, 1 su bardağı ılık su', 'Tuz', ' 1 adet yumurta', ' 250 g az yağlı kıyma', '1 Adet Soğan','Baharatlar','Tereyağ','Salça','Sarımsaklı Yoğurt'],
+                        recipe: [' Hamurdan bezeler yaparak, bunları teker teker, hazır yufkadan daha kalınca olarak açın.', 'Diğer taraftan kıymanı içine kırmızıbiber, karabiber, tuz ve rendelemiş olduğunuz soğanı ekleyerek biraz yoğurun.', 'Kıymadan kopardığınız küçük parçaları kare kare kesmiş olduğunuz hamurun üzerine koyun.', ' Hamurların 4 köşesini bir araya getirip şekillendirin.','Mantılar hazır olunca kaynayan suya atarak 15-20dk kadar pişirin',' Bu arada küçük bir tavada tereyağını eriyip salçayı kavurun.','Pişmekte olan mantının suyuna ilave edin.',' 5 dk kadar daha pişirdikten sonra ocaktan alın.',' Mantıyı tabaklara koyun üzerine sarımsaklı yoğurt dökün.']
+        
+                   
+                    },
+                    {
+                        id: 'tr9',
+                        name: 'Künefe',
+                        description: 'Çıtır Kadayıfın arasında sünen peynirli şerbetli tatlı.',
+                        image: 'https://d17wu0fn6x6rgz.cloudfront.net/img/w/tarif/mgt/kunefe.webp',
+                        time: '50 dk',
+                        servings: '1 Kişilik ',
+                        calories: '430 kcal/dilim',
+                        ingredients: ['250 g taze kadayıf', ' 2 yemek kaşığı tereyağı', ' 1 yemek kaşığı pekmez, 2 yemek kaşığı tereyağı', 'Arasına 125 g künefe peyniri', '2 su bardağı su',' 1.5 su bardağı şeker'],
+                        recipe: ['Tereyağı tavada eritilir.', 'Kadayıflar yaklaşık bir parmak eninde doğranır.', 'Üzerlerine eritilmiş tereyağı dökülerek harmanlanır.', ' Kalın tabanlı yapışmaz tava pekmezli tereyağı ile güzelce yağlanır.',' Kadayıfın yarısı tavaya alınarak sıkışması için üzerine güzelce bastırılır','Tuzsuz eriyebilen künefe peyniri ile künefenin üzeri kaplanır',' Kalan kadayıflarla da peynirin üzeri kapatılarak sıkıca bastırılır.','Tava kısık ateşte pişmeye bırakılır.',' Tavayı zaman zaman ateşin üzerinde yer değiştirerek her yerinin eşit şekilde kızarması beklenir',]
+                    },
+
+                ]
+
+            },
+           
+           
+            {
+                id: 'it',
+                name: 'İtalya',
+                coverImage: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&q=80&w=800',
+                dishes: [
+                    {
+                        id: 'it1',
+                        name: 'Pizza Margherita',
+                        description: 'Domates, mozzarella ve fesleğenin mükemmel uyumu.',
+                        image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&q=80&w=800',
+                        time: '60 dk',
+                        servings: '2 Kişilik',
+                        calories: '600 kcal',
+                        ingredients: ['Pizza hamuru', 'Domates sosu', '200g Mozzarella peyniri', 'Taze fesleğen', 'Zeytinyağı'],
+                        recipe: ['Hamuru ince bir şekilde açın.', 'Üzerine domates sosunu yayın.', 'Mozzarella peynirini dilimleyip yerleştirin.', 'Önceden ısıtılmış 220 derece fırında kenarları kızarana kadar pişirin.', 'Fırından çıkınca taze fesleğen ve zeytinyağı ekleyin.']
+                    },
+                    {
+                        id: 'it2',
+                        name: 'Lazanya',
+                        description: 'Kat kat makarna, bolonez sos ve beşamel sos şöleni.',
+                        image: 'https://iasbh.tmgrup.com.tr/ac8313/650/344/0/145/1258/805?u=https://isbh.tmgrup.com.tr/sbh/2020/10/05/lazanya-tarifi-evde-lazanya-nasil-yapilir-hamuru-yapimi-icin-gerekli-malzemeler-1601887140773.jpg',
+                        time: '90 dk',
+                        servings: '4 Kişilik',
+                        calories: '700 kcal',
+                        ingredients: ['Lazanya yaprakları', '500g Kıyma', 'Soğan, havuç', 'Beşamel sos', 'Parmesan peyniri'],
+                        recipe: ['Kıymalı harcı soğan ve havuçla kavurarak hazırlayın.', 'Fırın kabına sırasıyla beşamel sos, lazanya yaprağı ve kıymalı harç dizin.', 'En üste bol kaşar veya parmesan rendeleyin.', '180 derecede üzeri kızarana kadar pişirin.']
+                    },
+                    {
+                        id: 'it3',
+                        name: 'Risotto',
+                        description: 'Risotto, küçük pirinç anlamına gelen, telaffuzu “rizotto” olan klasik bir kuzey İtalya yemeğidir.',
+                        image: 'https://image.hurimg.com/i/hurriyet/90/0x0/6909ec16d30ab035b5260b0e.jpg',
+                        time: '25dk',
+                        servings: '3 Kişilik',
+                        calories: '348 kcal',
+                        ingredients: [' 200 gr arborio pirinci (1 su bardağı)', '100 ml beyaz şarap (1/2 (yarım) su bardağı)', 'Soğan, Sarımsak', ' 1 lt tavuk suyu', '1/2 (yarım) su bardağı porçini mantarı (taze, konserve veya kuru)',' 3 yemek kaşığı parmesan','2 yemek kaşığı tereyağı,Zeytinyağı','Tuz, Karabiber'],
+                        recipe: [' Minik küp doğranmış soğanları soteleyin. Soğanlar yumuşayınca sarımsakları da ilave edip 1-2 dk daha soteleyin.', ' Mantarları başka bir tavada soteleyip ilave edin.(kuru ise suda bekletin)', ' Tavuk suyunu kepçe kepçe ilave etmeye başlayın. Devamlı spatula ile karıştırarak kuruduğunda tekrar tavuk suyu ekleyin. (6-7 kepçe yeterli oluyor ama tadına bakarak karar verin)',' Tuz ilave edin. Ocaktan alınca önce soğuk küp küp doğranmış tereyağını içinde eritin sonra parmesan peynirini ekleyerek servis edin']
+                    },
+                    {
+                        id: 'it4',
+                        name: ' Pesto Soslu Penne',
+                        description: 'Pesto sosu ile harmanlanmış penne makarna',
+                        image: 'https://www.ardaninmutfagi.com/wp-content/uploads/2022/04/pestolu-makarna-i2.jpg',
+                        time: '90 dk',
+                        servings: '4 Kişilik',
+                        calories: '368 kcal',
+                        ingredients: ['Yarım paket penne makarna', '1 Paket Süt kreması', ' 2-3 yemek kaşığı hazır pesto sosu', ' 2 yemek kaşığı zeytinyağı veya sıvı yağ', 'Tuz'],
+                        recipe: ['Genişçe bir tencereye bolca su alıp kaynatalım.', 'Kaynayınca yarım tatlı kaşığı kadar tuz ekleyip makarnaları ilave edelim.', ' Paketin üzerinde yazdığı gibi 9-10 dk. pişmeye bırakalım.', 'Makarnalar pişmeye yakın uygun bir tavaya az sıvı yağımızı alalım.',' Pesto sosumuzu ilave edip karıştıralım, süt kremasını da ekleyip ısıtalım.',' Çok fokur fokur kaynamasına gerek kalmadan hafifçe pişirelim ve bu sırada suyunu süzdüğümüz makarnaları da ilave edelim.',' Karıştırarak bütün makarnaların sosa bulanmasını sağlayalım.',' Pesto soslu makarna servise hazır, soğutmadan servis edelim.']
+                    },
+                    {
+                        id: 'it5',
+                        name: 'Bruschetta ',
+                        description: 'Kızarmış tereyağlı çıtır ekmeklerin üzerine konmuş sebzeli harç',
+                        image: 'https://www.allrecipes.com/thmb/QSsjryxShEx1L6o0HLer1Nn4jwA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/54165-balsamic-bruschetta-DDMFS-4x3-e2b55b5ca39b4c1783e524a2461634ea.jpg',
+                        time: '15dk',
+                        servings: '2 Kişilik',
+                        calories: '98 kcal',
+                        ingredients: [' 2-3 tane domates', 'Taze fesleğen', 'Soğan, Sarımsak',' İstenirse kızarmış kabak ve patlıcan' ,'Mozzarella peyniri', ' 5-6 yemek kaşığı sıvı yağ veya zeytinyağı','Tuz'],
+                        recipe: ['Ekmeği orta kalınlıkta kesiyoruz ve fırın tepsisinde veya tavada iki taraflı fazla kurutmadan ve karartmadan kızartıyoruz.',' Sıvı yağı ve rendelenmiş sarımsağı bir kaseye alıp karıştıralım, bu karışımdan sıcak ekmeklerin üzerine bir fırça yardımı ile eşit bir şekilde sürelim.', ' Sebzelerimizi  ince ince doğrayalım ', 'Mozzarella peynirini dilimlere keselim, kabak ve patlıcanlı yapmak isterseniz ince dilimlere kesip kızartın.',' Sadece domates dilimleri veya füme somon dilimleri ile servis de yapabilirsiniz.',' Hazırladığınız malzemelerden ekmeklerin üzerine dilediğiniz şekilde hazırlayabilirsiniz']
+                    },
+                    {
+                        id: 'it6',
+                        name: 'Focaccia',
+                        description: 'Pesto sosu ile harmanlanmış penne makarna',
+                        image: 'https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480_1_5x/img/recipe/ras/Assets/303B313E-3F09-4D6C-9861-DE3913B31231/Derivates/FF2483CA-F234-4533-B5ED-1D4B528C1C76.jpg',
+                        time: '30 dk',
+                        servings: '2-3 Kişilik',
+                        calories: '187 kcal',
+                        ingredients: [' 4 su bardağı un', '1,5 su bardağı ılık su (300 ml)','  Yarım su bardağı zeytinyağı (100 ml)', '1 yemek kaşığı toz şeker ve  1 tatlı kaşığı tuz', '1 paket instant maya','Taze soğan, Biberiye,Kırmızı Soğan'],
+                        recipe: ['Hamurumuzu güzelce yoğurup toparlayalım açalım ve spatula ile düzeltelim', 'Toparlanan hamuru zeytinyağı ile yağladığımız fırın kabına alalım kabını kaplayacak şekilde elimizle bastırarak açalım  15 dakika kadar tepsi mayası için bekletelim', ' Daha sonra hamurun üzerini taze soğan, biberiye, kırmızı soğan ile dilediğiniz gibi süsleyin', 'Hazır olan focaccia ekmeğimizi önceden ısıtılmış 180 °C fırında, alt üst fansız ayarda yaklaşık 25 dakika pişirmeye bırakalım',' Sürenin sonunda pişen yumuşacık İtalyan ekmeğimiz focaccia servise hazır.']
+                    },
+                     
+                    {
+                        id: 'it7',
+                        name: 'Arrosticini',
+                        description: 'Odun ateşinde pişmiş kuzu şişler',
+                        image: 'https://tourismmedia.italia.it/is/image/mitur/1600X1000_eventi_e_sagre_4-3?wid=800&hei=500&fit=constrain,1&fmt=webp',
+                        time: '40 dk',
+                        servings: '3-4 Kişilik',
+                        calories: '250 kcal',
+                        ingredients: [' 700 gr kuzu kürek veya koyun eti, 2-3 cm küpler halinde doğranmış', '1 dal biberiye','  Zeytinyağı', ' Deniz tuzu', ' Taze çekilmiş karabibeR',' Şişler','Barbekü veya ızgara tavası'],
+                        recipe: [' Kuzuyu biberiye ve zeytinyağıyla birlikte bir kaseye koyun, tuz ve karabiberle tatlandırın. İyice karıştırın ve doğrudan pişirmek için barbeküyü önceden ısıtırken kenara koyun', 'Tahta şiş kullanıyorsanız, pişirme sırasında yanmalarını önlemek için en az 20 dakika soğuk suda bekletin.', '  Kuzuyu şişlere düzgün bir şekilde geçirin, yağ ve et arasında eşit bir dağılım olduğundan emin olun','Barbeküdeki kömürler kül beyazına döndüğünde şişleri 2-3 dakika pişirin, pişirme süresinin yarısında çevirin.',' Sıcak olarak pepperoncini ve kaliteli zeytinyağı ile çıtır ekmekle servis edin']
+                    }, 
+                   
+                    {
+                        id: 'it8',
+                        name: 'Tiramisu',
+                        description: 'Kat kat espresso ve liköre batırılmış süngerimsi kekin mascarpone peyniriyle doldurulup üzerine kakao tozu eklenerek hazırlanan İtalyan tatlısıdır.',
+                        image: 'https://static01.nyt.com/images/2017/04/05/dining/05COOKING-TIRAMISU1/05COOKING-TIRAMISU1-videoSixteenByNineJumbo1600.jpg',
+                        time: '25 dk',
+                        servings: '4-5 Kişilik',
+                        calories: '385 kcal',
+                        ingredients: ['450 ml krema', '250 gr mascarpone',' 2 yemek kaşığı Cointreau', ' 100 gr toz şeker', '2 yemek kaşığı kakao tozu', '1 yemek kaşığı Cointreau','300 gr kedi dili bisküvisi',' 1 yemek kaşığı pudra şekeri', '75 Ml sıcak su'],
+                        recipe: [' Bir kasede kremayı, mascarpone peynirini, Cointreau peynirini ve şekeri koyu kıvamlı bir krema elde edene kadar çırpın.', 'Kakao tozunu,pudra şekerini,suyu ve Conintreauyu karıştırın ', ' Her parmağınızı yaklaşık 4 saniye boyunca kakao ve Cointreau karışımına batırın (ters çevirin) ve ardından tabağa yerleştirin','Bir kat bisküvi, bir kat daha çikolata ekleyin ve kalan kremayla tamamlayın.']
+                    },
+                    {
+                        id: 'it9',
+                        name: 'Fiorentina',
+                        description: 'Pesto sosu ile harmanlanmış penne makarna',
+                        image: 'https://hips.hearstapps.com/goodhousekeeping-uk/main/embedded/5759/T2-pizza-fiorentina-eggs-241012-de.jpg',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '606 kcal',
+                        ingredients: [' 1 pizza tabanı', ' 5 zeytin, karışık','  60 gr manda mozzarellas', '1 avuç bebek ıspanağı', ' 20 gr rendelenmiş Parmesan',' 1 tutam kekik','1 yumurta, yumuşak haşlanmış, soyulmuş',' zeytinyağı','tuz'],
+                        recipe: [' Domates sosu için, kalın tabanlı bir tavayı orta ateşe koyun. Zeytinyağını ekleyin ve ısınınca soğan,kereviz, havuç ve maydanozu ekleyin. Sebzeler yumuşayana kadar 15 dakika boyunca ara sıra karıştırarak kısık ateşte pişirin ', ' Tuz ve karabiberle iyice tatlandırın, ateşi kısın ve sos koyulaşıp lezzeti yoğunlaşana kadar 15-20 dakika kağaksız pişirin', ' Daha sonra hamurun üzerini taze soğan, biberiye, kırmızı soğan ile dilediğiniz gibi süsleyin', ' Fırını 240˚C/ önceden ısıtın. Pizza tabanını hazırlayın ve kenarlarında 2-3 cm boşluk bırakarak ince bir tabaka domates sosu sürün ',' Zeytinleri ve mozzarellayı pizzanın etrafına eşit şekilde yerleştirin.',' Pizzayı fırından çıkarın ve üzerine bebek ıspanağı, kekik, parmesan rendesi, yumurta, bir tutam tuz ve biraz zeytinyağı gezdirin. Hemen servis edin']
+                    },
+                                    
+                ]
+            },
+            {
+                id: 'mx',
+                name: 'Meksika',
+                coverImage: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&q=80&w=800',
+                dishes: [
+                    {
+                        id: 'mx1',
+                        name: 'Tacos',
+                        description: 'Mısır tortillası içinde baharatlı et ve taze sebzeler.',
+                        image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&q=80&w=800',
+                        time: '30 dk',
+                        servings: '3 Kişilik',
+                        calories: '200 kcal/adet',
+                        ingredients: ['12 adet küçük mısır tortillası', '500g Kıyma veya Et', 'Taco baharatı', 'Soğan, Kişniş', 'Lime'],
+                        recipe: ['Eti taco baharatlarıyla kavurun.', 'Tortillaları tavada hafifçe ısıtın.', 'Eti tortillaların içine paylaştırın.', 'Üzerine doğranmış soğan, kişniş ve lime suyu ekleyerek servis yapın.']
+                    },
+                    {
+                        id: 'mx2',
+                        name: 'Guacamole',
+                        description: 'Avokado bazlı, ferahlatıcı ve sağlıklı bir sos.',
+                        image: 'https://californiaavocado.com/wp-content/uploads/2020/07/Best-Guacamole-Ever-1.jpeg',
+                        time: '10 dk',
+                        servings: '4 Kişilik',
+                        calories: '150 kcal',
+                        ingredients: ['3 adet olgun Avokado', '1 adet soğan', '1 adet domates', 'Kişniş', 'Limon suyu', 'Tuz'],
+                        recipe: ['Avokadoları ezin.', 'Küçük doğranmış soğan, domates ve kişnişi ekleyin.', 'Bol limon suyu ve tuz ekleyip karıştırın.', 'Cips ile servis yapın.']
+                    },
+                
+                   {
+                        id: 'mx3',
+                        name: 'Enchiladas',
+                        description: 'Üzerine domates ve acı biber sosunun gezdirildiği, etle doldurulmuş ve rulo biçiminde sarılmış mısırdan üretilmiş tortilla.',
+                        image: 'https://www.pamperedchef.com/iceberg/com/recipe/452019-lg.jpg',
+                        time: '20 dk',
+                        servings: '3-4 Kişilik',
+                        calories: '395 kcal',
+                        ingredients: [' 500 gram dana kuşbaşı', ' 300 gram kadar rendelenmiş kaşar peyniri','10 adet lavaş','1 adet soğan, 4 diş sarımsak', '3 adet kapya biber', ' Yarım çay bardağı zeytinyağı', ' 1 yemek kaşığı salça, 1 su bardağı su', '1 tatlı kaşığı pul biber,1 tatlı kaşığı kekik,1 tatlı kaşığı nane,1 tatlı kaşığı tuz,1 tatlı karabiber'],
+                        recipe: [' İlk olarak kuşbaşı doğranmış etler yağsız tavada suyu çekinceye kadar pişirilir.', 'Suyunu çektikten sonra etler istediğiniz kıvamda pişene kadar su ekleyiniz.', ' Son olarak dilediğiniz baharatları da ekleyerek 1 su bardağı su da ekleyerek tavanın kapağını kapatıp altını kısınız.', 'Biberler ve soğan piştikten sonra ocaktan alınız.',' Lavaşın içerisine önce etli karşımdan sonrada üzerine biraz kaşar serpiştirerek saralım, yağlı kağıt serili fırın tepsisine dizelim','Etin suyundan dilerseniz lavaşların üzerine sürebilirsiniz','Ardından 200 derece fırına lavaşlar çıtır olana kadar pişirelim sonra servis edilmeye hazır']
+                    },
+                    {
+                        id: 'mx4',
+                        name: 'Chiles en Nogada',
+                        description: 'Chiles en nogada Meksika mutfağına ait ceviz soslu poblano biber dolması dır.',
+                        image: 'https://mexicanfoodjournal.com/wp-content/uploads/2016/09/Chile-en-Nogada.jpg',
+                        time: '75 dk',
+                        servings: '4 Kişilik',
+                        calories: '669 kcal',
+                        ingredients: ['1 tepeleme su bardağı kabuklu ceviz yarısı', ' Süt (yaklaşık 2 su bardağı )', ' 1/4 pound queso fresco (veya çiftçi peyniri)', ' 1 1/2 su bardağı koyu ekşi krema (veya creme fraiche)', ' 1 1/2 yemek kaşığı şeker', ' 1/4 çay kaşığı öğütülmüş tarçın'],
+                        recipe: ['Cevizleri süzün. Islatılmış ve süzülmüş cevizleri, queso frescoyu, ekşi kremayı, şekeri ve tarçını bir blendera koyun ve tamamen pürüzsüz olana kadar püre haline getirin ', ' Picadillo dolgusunu yapın.', 'Chilesı Nogadada bir araya getirin.', ' Biberleri iyice doldurana kadar picadillo ile doldurun. Ayrı ayrı tabaklara veya servis tabağına yerleştirin.']
+                    },
+                    {
+                        id: 'mx5',
+                        name: 'Tamales',
+                        description: 'İçinde çeşitli malzemeler olan hamurun, mısır veya muz yaprağına sarılarak pişirilmesiyle hazırlanan yiyecek.',
+                        image: 'https://res.cloudinary.com/hksqkdlah/image/upload/c_fill,dpr_2.0,f_auto,fl_lossy.progressive.strip_profile,g_faces:auto,h_599,q_auto:low/SFS_Tamales-20740_wc0uk8',
+                        time: '45 dk',
+                        servings: '4 Kişilik',
+                        calories: '275 kcal',
+                        ingredients: ['Masa harina', 'Et suyu', 'Kabartma tozu', 'Kişniş', 'Domuz yağı ', 'Tuz , Kimyon'],
+                        recipe: ['Mısır koçanlarını çok sıcak su dolu bir kasede 30 dakika veya yumuşayana kadar bekletin.', 'İstediğiniz iç harcı hazırlayın.', 'Büyük bir kasede, domuz yağı ve 2 yemek kaşığı suyu kabarana kadar, yaklaşık 3-5 dakika mikserle çırpın.', 'Bir mısır koçanını, parlak tarafı yukarı bakacak şekilde  tezgahın üzerine, geniş ucu üste gelecek şekilde yerleştirin.',' Buharlı pişirici veya düdüklü tencerenizin tabanına su ekleyin. ','Tamaleleri dik olarak, açık uçları yukarı bakacak şekilde, dik durmaları için yeterli sıkılıkta yerleştirin.','Manuel/Yüksek Basınçta 25 dakika pişirin.',' Birini çıkarın ve kabuğunu soymaya çalışın. Kabuk tamaleden temiz bir şekilde ayrılıyorsa pişmiş demektir.','Tabağa alıp servis edebilirsiniz ']
+                    },
+                    {
+                        id: 'mx6',
+                        name: 'Quesadilla',
+                        description: 'Tortillanın içine başlıca peynir olmak üzere birçok malzemenin doldurulmasıyla yapılan  Mkesikaya özgü yemek.',
+                        image: 'https://www.homemadeinterest.com/wp-content/uploads/2022/08/chicken-quesadilla-recipe-5.jpg',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '150 kcal',
+                        ingredients: ['4 yaprak tortilla', ' 2 tavuk göğsü', '2 su bardağı mozzarella peyniri', '1 kırmızı biber,1 sarı biber', ' 2 yemek kaşığı zeytinyağ', 'Tuz,Karabiber'],
+                        recipe: [' Fırını 220 dereceye ısıtın. Tepsiyi yağlı kağıtla kaplayın..', ' Bir tavaya zeytinyağını koyup tavuk göğüs etini orta ateşte pişirin. Soğuduktan sonra incecik dilimleyin.', ' Tavukları pişirdiğiniz tavada biberleri ve soğanları da renk değiştirip yumuşayana kadar pişirin. Tuz ve Karabiber ile tadlandırın.', 'Bir tortillaya mozzarella peyniri koyun, üzerine dilimlenmiş tavuk, biberler ve biraz mozzarella peyniri koyup diğer tortillayla üzerini kapatın .','Quesadillaları tepsiye dizin ve önceden ısıtılmış 175 derecelik fırında peynir eriyene kadar 7-8 dakika pişirin','Dilerseniz yanında acılı patates cipsi de servis edebilirsiniz. Afiyet olsun']
+                    },
+                    
+                    {
+                        id: 'mx7',
+                        name: 'Pozole',
+                        description: 'Üzerine domates ve acı biber sosunun gezdirildiği, etle doldurulmuş ve rulo biçiminde sarılmış mısırdan üretilmiş tortilla.',
+                        image: 'https://static.wixstatic.com/media/d6fe55_16179d1f19314cf2b8f9d2a892edf3de~mv2.png/v1/fill/w_568,h_568,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/d6fe55_16179d1f19314cf2b8f9d2a892edf3de~mv2.png',
+                        time: '140 dk',
+                        servings: '3-4 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: [' 500 gram kurutulmuş hominy mısırı (veya 2 kutu konserve hominy)', ' 1 kg domuz eti',' 1 büyük beyaz soğan, dörde bölünmüş',' 4 diş sarımsak, ezilmiş,  2 adet defne yaprağı', ' 4-5 adet kuru kırmızı biber ',  '1 tatlı kaşığı tuz,1 tatlı karabiber','Dilediğiniz garnitürler'],
+                        recipe: ['Kurutulmuş hominy’yi bir gece önceden bol suyla ıslatın. Ertesi gün suyunu süzün ve büyük bir tencerede üzerini kaplayacak kadar su ekleyerek yumuşayana kadar, yaklaşık 2-3 saat kaynatın.', ' Domuz etini büyük bir tencerede soğan, sarımsak ve defne yaprakları ile birlikte pişirin.  .', '  Kuru kırmızı biberleri sıcak suda 15 dakika bekleterek yumuşatın.', 'Pişmiş hominy’yi, hazırladığınız biber sosunu ve süzülmüş et suyunu bir tencereye alın.','  Pozole’yi sıcak olarak servis edin. Üzerine lahana, turp, kişniş ve soğan gibi garnitürler ekleyin.',]
+                    },
+                    {
+                        id: 'mx8',
+                        name: ' Sopa de Lima',
+                        description: 'Misket limonu çorbası, tavuk veya domuz eti veya sığır eti, limon suyu gibi diğer etlerden yapılan ve tortilla cipsleriyle servis edilen Meksikanın Yucatan eyaletinden geleneksel bir yemektir.',
+                        image: 'https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480/img/recipe/ras/Assets/d931e9d37982c121a7b28d8e9b1ee093/Derivates/5aafcc475431785f98c98f44464756c4a3d978dc.jpg',
+                        time: '45 dk',
+                        servings: '3-4 Kişilik',
+                        calories: '930 kcal',
+                        ingredients: ['1 ila 1 1/2 su bardağı sızma zeytinyağı , fıstık yağı, kanola yağı veya mısır yağı', ' 6 mısır tortillası', '1/4 su bardağı doğranmış beyaz soğan', ' 3 diş sarımsak , kıyılmış', ' 1 habanero biberi , çekirdekleri çıkarılmış ve kıyılmış', 'Dilediğiğniz baharatlar'],
+                        recipe: [' Fırını 175°C ye önceden ısıtın', ' Tortillaları fırın tepsisine tek sıra halinde yerleştirin ve fırında 10-12 dakika ısıtın, domates ve kişnişi ekleyin.', 'Büyük, kalın tabanlı bir tencereye 1,5 cm derinliğinde, yaklaşık 1 ila 1,5 su bardağı kadar yağ dökün.', ' Küçük bir tortilla parçası çok hızlı yanarsa veya kızarırsa, devam etmeden önce yağın biraz soğumasını sağlamak için tavayı ocaktan alın.','Sebir tavada sebzelrimizi soteleyelim','Tavuüuda ekleyerek altı kısık biçimde pişirelim','^Bütün malzemeleri karştıralım ardından tavuğuda ekleyerek kase ile sevis edelim']
+                    },
+                    {
+                        id: 'mx9',
+                        name: 'Ceviche',
+                        description: 'Turunçgiller ve baharatlarla marine edilmiş balık veya kabuklu deniz ürünlerinden oluşan soğuk bir yemektir. ',
+                        image: 'https://cdn7.kiwilimon.com/brightcove/11083/640x640/11083.jpg.webp',
+                        time: '100 dk',
+                        servings: '2 Kişilik',
+                        calories: '150 kcal',
+                        ingredients: [' 1 yemek kaşığı koşer tuzu', ' 1 pound orta veya küçük karides ', ' 3/4 su bardağı limon suyu', '1 su bardağı ince kıyılmış kırmızı soğan', '  1 su bardağı doğranmış kişniş', '1 avokado, 1/2 inçlik parçalara kesilmiş'],
+                        recipe: ['Büyük bir tencerede, 1 yemek kaşığı tuzla tatlandırılmış 2 litre suyu kaynatın.', ' Karidesleri kepçe yardımıyla çıkarıp, pişirme işlemini durdurmak için buzlu su dolu bir kaseye koyun. ', ' Karidesleri süzün. Her bir karides parçasını ikiye veya 2,5 cm uzunluğunda parçalara kesin', 'Karidesleri cam veya seramik bir kaseye koyun. Limon ve limon suyunu ekleyip karıştırın. Üzerini kapatıp yarım saat buzdolabında bekletin. .','Soğan ve acı biberi ekleyip karıştırın:',' Doğranmış kırmızı soğanı ve serrano biberini ekleyip karıştırın. Yarım saat daha buzdolabında bekletin.','Servis etmeden hemen önce kişniş, salatalık ve avokadoyu ekleyin. Tortilla cipsleriyle birlikte soğuk servis edin']
+                    },
+                
+                ]
+            },
+            {
+                id: 'jp',
+                name: 'Japonya',
+                coverImage: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=800',
+                dishes: [
+                    {
+                        id: 'jp1',
+                        name: 'Sushi',
+                        description: 'Sirkeli pirinç ve taze deniz ürünlerinin sanatsal buluşması.',
+                        image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=800',
+                        time: '60 dk',
+                        servings: '2 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Sushi pirinci', 'Nori yaprağı', 'Somon veya Ton balığı', 'Salatalık', 'Pirinç sirkesi'],
+                        recipe: ['Pirinci haşlayıp sirke ile tatlandırın.', 'Nori yaprağının üzerine pirinci yayın.', 'Ortasına balık ve sebzeleri koyun.', 'Bambu mat yardımıyla sıkıca sarın ve dilimleyin.']
+                    },
+                    {
+                        id: 'jp2',
+                        name: 'Ramen',
+                        description: 'Zengin aromalı et suyu içinde erişte çorbası.',
+                        image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800',
+                        time: '3 Saat',
+                        servings: '2 Kişilik',
+                        calories: '550 kcal',
+                        ingredients: ['Ramen eriştesi', 'Et suyu (Bone broth)', 'Haşlanmış yumurta', 'Taze soğan', 'Soya sosu'],
+                        recipe: ['Et suyunu zencefil ve sarımsakla kaynatın.', 'Erişteleri ayrı bir yerde haşlayın.', 'Kaseye erişteleri ve suyu koyun.', 'Üzerine yumurta, et dilimleri ve taze soğan ekleyerek servis edin.']
+                    },{
+                        id: 'jp3',
+                        name: 'Tempura',
+                        description: 'Çıtır çıtır kızartılmış sebze ve karidesler.',
+                        image: 'https://www.thespruceeats.com/thmb/CkzlxmRyeK8IUrMrHrbq73RX4g4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/basic-tempura-for-fish-and-seafood-1300531-hero-01-bbd91b4ee23940749fec5ab7693eadcc.jpg',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '400 kcal',
+                        ingredients: ['Büyük karides', 'Kabak, patlıcan', 'Un, mısır nişastası', 'Buzlu soda', 'Yumurta sarısı'],
+                        recipe: ['Un, nişasta, yumurta ve buzlu sodayı hafifçe karıştırın (pütürlü kalsın).', 'Sebze ve karidesleri karışıma batırın.', 'Kızgın yağda altın rengi olana kadar kısa süre kızartın.', 'Soya sosu ve turp rendesi ile servis yapın.']
+                    },
+                    {
+                        id: 'jp4',
+                        name: 'Okonomiyaki',
+                        description: 'Japon usulü tuzlu krep veya "ne istersen koy" pizzası.',
+                        image: 'https://static01.nyt.com/images/2023/10/10/multimedia/08EATrex-Okonomiyaki-wjth/08EATrex-Okonomiyaki-wjth-mediumSquareAt3X.jpg',
+                        time: '25 dk',
+                        servings: '2 Kişilik',
+                        calories: '480 kcal',
+                        ingredients: ['Un, yumurta, dashi suyu', 'İnce kıyılmış lahana', 'Taze soğan', 'Pastırma dilimleri', 'Okonomiyaki sosu, mayonez'],
+                        recipe: ['Hamur malzemelerini ve lahanayı karıştırın.', 'Tavaya döküp üzerine pastırma dilimlerini dizin.', 'Her iki yüzünü de nar gibi kızartın.', 'Üzerine sos, mayonez ve palamut talaşı dökerek servis yapın.']
+                    },
+                    {
+                        id: 'jp5',
+                        name: 'Takoyaki',
+                        description: 'İçi ahtapot parçalı, dışı çıtır, içi yumuşak top kekler.',
+                        image: 'https://iamafoodblog.b-cdn.net/wp-content/uploads/2024/12/takoyaki-recipe-4790w.jpg',
+                        time: '40 dk',
+                        servings: '4 Kişilik',
+                        calories: '320 kcal',
+                        ingredients: ['Takoyaki unu', 'Haşlanmış ahtapot', 'Taze soğan', 'Zencefil turşusu', 'Takoyaki sosu'],
+                        recipe: ['Özel takoyaki tavasını yağlayın.', 'Hamuru döküp içine ahtapot parçalarını atın.', 'Top şeklini alana kadar çubuklarla çevirerek pişirin.', 'Üzerine sos ve nori serpip sıcak yiyin.']
+                    },
+                    {
+                        id: 'jp6',
+                        name: 'Udon',
+                        description: 'Kalın buğday eriştesiyle yapılan doyurucu çorba.',
+                        image: 'https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480/img/recipe/ras/Assets/702bf478-0181-4a06-a273-061bf0020c5b/Derivates/7b779c29-79fd-4ec5-9517-2fc6cf97f624.jpg',
+                        time: '20 dk',
+                        servings: '1 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Udon eriştesi', 'Dashi suyu', 'Soya sosu, Mirin', 'Yeşil soğan', 'Kamaboko (balık keki)'],
+                        recipe: ['Dashi suyu, soya sosu ve mirini kaynatın.', 'Erişteleri haşlayıp kaseye alın.', 'Üzerine sıcak suyu dökün.', 'Yeşil soğan ve balık keki ile süsleyin.']
+                    },
+                    {
+                        id: 'jp7',
+                        name: 'Onigiri',
+                        description: 'Genellikle üçgen şekilli, içi dolgulu pirinç topları.',
+                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTj7BD0gM_HNELud0cf1MnP4qed7_vgKb4C9w&s',
+                        time: '15 dk',
+                        servings: '3 Adet',
+                        calories: '180 kcal/adet',
+                        ingredients: ['Sushi pirinci', 'Ton balığı mayonez veya erik turşusu', 'Nori yaprağı', 'Tuz'],
+                        recipe: ['Ellerinizi tuzlu suyla ıslatın.', 'Avucunuza pirinci alıp ortasına dolgu malzemesini koyun.', 'Üçgen şekli vererek sıkıştırın.', 'Alt kısmına nori yaprağı sarın.']
+                    },
+                    {
+                        id: 'jp8',
+                        name: 'Yakitori',
+                        description: 'Kömür ateşinde ızgaralanmış tavuk şişleri.',
+                        image: 'https://int.japanesetaste.com/cdn/shop/articles/how-to-make-yakitori-grilled-chicken-skewers-japanese-taste.jpg?v=1717125599&width=5760',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '200 kcal',
+                        ingredients: ['Tavuk but (kuşbaşı)', 'Taze soğan', 'Soya sosu', 'Mirin, Şeker', 'Şiş çubukları'],
+                        recipe: ['Soya sosu, mirin ve şekeri kaynatarak teriyaki sos yapın.', 'Tavukları ve soğanları sırayla şişe dizin.', 'Mangalda veya tavada pişirirken sık sık sos sürün.']
+                    },
+                    {
+                        id: 'jp9',
+                        name: 'Mochi',
+                        description: 'Japon pirinç kekinden yapılan yumuşak, çiğnenen tatlı.',
+                        image: 'https://d17wu0fn6x6rgz.cloudfront.net/img/w/tarif/mgt/6_1_11zon.webp ',
+                        time: '45 dk',
+                        servings: '6 Adet',
+                        calories: '120 kcal/adet',
+                        ingredients: ['Yapışkan pirinç unu (Mochiko)', 'Su, Şeker', 'Mısır nişastası', 'Kırmızı fasulye ezmesi (anko)'],
+                        recipe: ['Pirinç unu, şeker ve suyu karıştırıp buharda pişirin.', 'Yapışkan hamuru nişasta serpilmiş tezgaha alın.', 'Küçük parçalar koparıp içine fasulye ezmesi koyun ve yuvarlayın.']
+                    }                                                                    
+                
+                ]
+  
+            },
+            {
+                id: 'fr',
+                name: 'Fransa',
+                coverImage: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=800',
+                dishes: [
+                    {
+                        id: 'fr1',
+                        name: 'Ratatouille',
+                        description: 'Fransız usulü, fırınlanmış sebze türlüsü.',
+                        image: 'https://images.unsplash.com/photo-1572453800999-e8d2d1589b7c?auto=format&fit=crop&q=80&w=800',
+                        time: '75 dk',
+                        servings: '4 Kişilik',
+                        calories: '250 kcal',
+                        ingredients: ['Patlıcan', 'Kabak', 'Domates', 'Biber', 'Zeytinyağı', 'Kekik'],
+                        recipe: ['Tüm sebzeleri ince halkalar halinde doğrayın.', 'Tepsiye domates sosu yayın.', 'Sebzeleri sırasıyla ve estetik bir şekilde dizin.', 'Üzerine zeytinyağı ve baharat gezdirip üzerini kapatarak fırınlayın.']
+                    },
+                    {
+                        id: 'fr2',
+                        name: 'Kruvasan',
+                        description: 'Kat kat tereyağlı hamuruyla kahvaltıların vazgeçilmezi.',
+                        image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&q=80&w=800',
+                        time: '4 Saat',
+                        servings: '6 Adet',
+                        calories: '300 kcal',
+                        ingredients: ['Un', 'Maya', 'Süt', 'Bol tereyağı', 'Şeker', 'Tuz'],
+                        recipe: ['Hamuru yoğurup mayalandırın.', 'Hamurun içine blok tereyağı koyup katlayarak açın (tur verin).', 'Bu işlemi aralıklarla tekrarlayın.', 'Üçgen kesip rulo yapın ve fırında pişirin.']
+                    },
+                    {
+                        id: 'fr3',
+                        name: 'Krep Suzette',
+                        description: ' Fransızların ünlü krep tatlısı olarak bilinen lezzete tüm Fransız restoranlarında rastlamak mümkün.',
+                        image: 'https://ia.tmgrup.com.tr/9de206/483/272/0/880/1365/1650?u=https://i.tmgrup.com.tr/sfr/2025/04/21/crepes-suzette-1745227380130.jpg',
+                        time: '15 Dakika ',
+                        servings: '8 Adet',
+                        calories: '300 kcal',
+                        ingredients: ['2 Adet orta boy yumurta', '1 su bardağı süt(200 ml)', '1 su bardağı su(200 ml)', '2yemek kaşığıtoz şeker(45 gram)', ' 1 yemek kaşığı un', '2yemek kaşığıeritilmiş tereyağı','1 Paket vanilin','1 Tutam tuz'],
+                        recipe: ['Bir kapta yumurtalar; süt azar azar eklenerek çırpılır. Su ve toz şeker eklenir. Un azar azar  ekleyerek karıştırın.', 'En son tereyağı, tuz ve vanilin ilavesiyle akışkan ve pürüzsüz bir hamur elde edilir (Pürüzsüz olması için süzgeçten geçirilebilir).', ' Tava orta kısık ateşte ısıtılıp 1 tatlı kaşığı ayçiçek yağı dökülür ve kağıt peçeteyle yayılır,Tavanın ortasına 1 kepçe hamur dökülür ve sağa sola döndürerek kenarlara yayılması  sağlanır', 'Yapışan kenarlar yavaşça spatula ile itilir. Hamur tavadan ayrılmaya başlayınca (yaklaşık 1-2 dakika sonra) krep spatulasıyla gevşetilip ters çevirilir.','Tüm hamur bitene kadar işleme devam edilir. ','Ardından tabaklayarak servis edebilirsiniz afiyet olsun']
+                    },
+                    {
+                        id: 'fr4',
+                        name: 'Soupe a l’oginon',
+                        description: 'Kat kat tereyağlı hamuruyla kahvaltıların vazgeçilmezi.',
+                        image: 'https://brasseriemadeleine-orleans.fr/wp-content/uploads/2024/06/soupe-oignon-gratinee-delicieuse-et-reconfortante-1024x574.webp',
+                        time: '125 Dakika',
+                        servings: '4 Adet',
+                        calories: '129 kcal',
+                        ingredients: ['6 adet sarı soğan,', '55 gr Tereyağı', '125 ml Kırmızı şarap', '30 ml Brendi', '1 Litre Tavuk suyu ', '1 Litre Dana suyu','15 ml Kavrulmuş Un','1 tutam öğütülmüş hindistan cevizi'],
+                        recipe: ['Orta ateşte büyük bir tencerede, soğanları tereyağında ara sıra karıştırarak 15 dakika pişirin.', 'Ateşi yükseltin ve soğanlar karamelize olana kadar 15 dakika daha, sürekli  karıştırarak devam edin.', ' Şarap ve konyakla deglaze edin. .', 'Neredeyse kuruyana kadar kısık ateşte pişirin.','Neredeyse kuruyana kadar kısık ateşte pişirinmuskatı ekleyin. İyice karıştırın.','Kaynama noktasına gelinceye kadar orta-yüksek ateşte 30 dakika veya çorba yarı yarıya azalana kadar pişirin.','Izgarayı fırının ortasına yerleştirin. Fırını ızgara moduna önceden ısıtın bir fırın  tepsisine 4 adet kase yerleştirin','Peynir eriyip kızarana kadar 5 dakika fırında pişirin.']
+                    },
+                    {
+                        id: 'fr5',
+                        name: 'Coq Au Vin',
+                        description: 'Tavuk , domuz pastırması , mantar ve isteğe bağlı olarak sarımsakla pişirilerek yapılan bir Fransız yemeğidir.',
+                        image: 'https://static01.nyt.com/images/2023/08/24/multimedia/MC-Coq-Au-Van-ctpm/MC-Coq-Au-Van-ctpm-videoSixteenByNineJumbo1600.jpg',
+                        time: '40 Dakika ',
+                        servings: '6 Kisilik',
+                        calories: '298 kcal',
+                        ingredients: ['6 adet tavuk but', '1 adet havuç', '4 diş sarımsak', '4 yemek kaşığı tereyağı', '3 yemek kaşığı un', '700 ml su ya da et suyu','1 çay kaşığı tane karabiber','5 Dal Maydonoz','1 adet defne yaprağı','300 gr mantar','2 kaşık limon suyu','Taze kekik'],
+                        recipe: ['Tencereye yağ alınır. Tavuk butların her iki yüzeyine tuz ve karabiber koyularak tavda renk alana  kadar kızartılır.', 'Aynı tavada kesilmiş havuç, soğan ve sarımsak sotelenir. Un ilave edilerek kavrulur.', 'Suyun bir kısmı eklenerek 5 dakika pişirilir ardından kalan su, tavuklar, kekik dalı ve maydanoz eklenerek kapağı kapalı yarım saat kadar pişirilir.', 'Ardından arpacık soğanlar eklenerek pişirilmeye devam edilir.','Mantarlar temizlenerek 2-3 parçaya bölünür. Tavaya yağ eklenir, limon suyu ve 2 kaşık normal su ile mantarlar pişirilir. ','Mantarlar tavukların içerisine eklenir. Afiyet olsun.']
+                    },
+                    {
+                        id: 'fr6',
+                        name: 'Boeuf Bourguignon',
+                        description: 'Kat kat tereyağlı hamuruyla kahvaltıların vazgeçilmezi.',
+                        image: 'https://ichef.bbci.co.uk/food/ic/food_16x9_1600/recipes/boeuf_bourguignon_25475_16x9.jpg',
+                        time: '15 Dakika',
+                        servings: '4 Kişilik',
+                        calories: '479 kcal',
+                        ingredients: ['1/2 Kilogram dana döş eti', '1 Adet soğan', '3 Diş sarımsak', '2 Adet havuç', '100 Gram mantar', '1 Yemek kaşığı un','1 Yemek kaşığı salça','1 Çay kaşığı Tuz','1 Çay kaşığı karabiber','1 Adet defne yaprağı','1 Çay kaşığı kekik','2 Yemek kaşığı Tereyağı','2 Yemek kaşığı tereyağı'],
+                        recipe: ['Beef Bourguignon için ısıtmış olduğunuz tencerenizde etinizi güzelce önlü arkalı mühürleyin.', 'Ardından eti içinden alın, yağı, küp doğranmış soğanla sarımsağı ve havucu ilave edin.', 'Unu ve salçayı da ekleyerek kokusu çıkana kadar kavurun. Ardından hizasında sıcak su ekleyip etleri tekrar içine alarak pişmeye bırakın.', 'Defne yaprağı ve baharatları da ilave edin.','Pişmesine son on dakika kala mantarlarınızı ilave edip tekrar pişmeye bırakın','10 dakika sonra Beef Bourguignon hazır. Afiyet olsun.']
+                    },
+                    {
+                        id: 'fr7',
+                        name: 'Escargots à la Bourguignonne',
+                        description: 'Kat kat tereyağlı hamuruyla kahvaltıların vazgeçilmezi.',
+                        image: 'https://cache.marieclaire.fr/data/photo/w1200_h630_ci/1pg/escargots-a-la-bourguignonne.jpg',
+                        time: '60 Dakika ',
+                        servings: '4 Kişilik',
+                        calories: '280 kcal',
+                        ingredients: ['30 adet salyangoz', 'Tereyağı', '1 diş sarımsak', '40 gr doğranmış sarımsak', 'Biber', 'Tuz','Su','1 soğan','2 sap Maydonoz'],
+                        recipe: ['Köpüğü alarak, kaynayan suda 1 saat boyunca salyangozu haşlayın. .', 'Bir kürdan kullanarak boşaltın ve kabuktan çıkarın. Ek olarak siyah kısmı çıkarın.', 'Kabukları 10 dakika kaynar suda karbonat ile haşlayın ve kurumaya bırakın.', 'Salyangoz çorbasını sıcak suya maydanoz, biber ve soğanı koyup hazırlayın.','90 dakika kadar pişirin. Sonra salyangozları süzün ve bir kaba yerleştirin','Bu sırada çeşnili bir krema karışımını tereyağı, kıyılmış sarımsak, maydanoz, tuz ve karabiberle hazırlayın. ','Kremayı salyangoz kabuğunun içine ekleyin, daha fazla krema ekleyip kapatın. Kalan salyangozlara da aynı işlemi yapın.','Tüm salyangoz kabuğunu vernikli Smoothwall kaplarımızdaki bir tuz yatağının üzerine koyun Önceden 392F (200 C) ısıtılmış fırında 8 dakika pişirin. Hemen servis yapın.']
+                    },
+                    {
+                        id: 'fr8',
+                        name: 'Pain Perdu',
+                        description: 'Kat kat tereyağlı hamuruyla kahvaltıların vazgeçilmezi.',
+                        image: 'https://uglyfood.com.sg/wp-content/uploads/2024/11/pain-perdu-recipe-1730807716.jpg',
+                        time: '30 Dakika ',
+                        servings: '4 Kişilik ',
+                        calories: '300 kcal',
+                        ingredients: [' 8 Dilim tost ekmeği', '100 ml süt', '3 Adet yumurta', '100 Gram tereyağı', '1 Yemek kaşığı tarçın', '3 Yemek kaşığı esmer şeker','1 Adet muz','4 Yemek kaşığı fıstık ezmesi'],
+                        recipe: ['Süt ve yumurtayı iyice çırpın. Ekmekleri karışımın içine batırıp iyice ıslattıktan sonra tavada  eriyen tereyağında kızartın.', ' Kızaran ekmekleri karıştırdığınız esmer şeker ve tarçına bulayın.', ' Bu yapılmış haliyle bile nefis olan ekmekleri ben görsel şölene dönüştürmek için arasına fıstık .', 'Üçgen kesip rulo yapın ve fırında pişirin ezmesi sürüp muz dilimleriyle süsledim.','İsterseniz geç yapılan hafta sonu kahvaltılarınızda isterseniz gün ortası atıştırmalığınızda afiyetle yiyebilirsiniz, Bon appetit']
+                    },
+                    {
+                        id: 'fr9',
+                        name: 'Kiş Lorraine',
+                        description: 'Kat kat tereyağlı hamuruyla kahvaltıların vazgeçilmezi.',
+                        image: 'https://image.hurimg.com/i/hurriyet/90/0x0/6305fd9a4e3fe02874a197f2.jpg',
+                        time: '40 Dakika',
+                        servings: '6 Kişilik',
+                        calories: '300 kcal',
+                        ingredients: ['200 g un', '100 g tereyağı', '4 Yumurta', '30 ml su', '200 g sucuk', '100 g gravyer peynir','250 ml krema','1 g toz muskat','1 g toz muskat','Karabiber'],
+                        recipe: ['Tereyağını elinizle una yedirin. Ortasına çukur açıp; 1 yumurta, su ve tuz ekleyip, hamuru elde edin.', 'Sucukları küp şeklinde kesip, soğuk suya koyun ve kaynatın. Kaynama noktasına gelince, süzün ve sucuklar hâlâ sıcakken tereyağı ile 2-3 dakika kavurun.', 'Yağını süzüp, soğumaya bırakın. Krema, 3 yumurta, tuz, karabiber ve muskatı çırpın ve süzgeçten geçirin .', 'Hamurun üzerine, kabarmasını engellemek için yağlı kağıt ve ağırlık yapması için kuru fasulye  veya nohut koyun .','180 derecelik fırında yaklaşık 10 dakika pişirin. Tart hamurunu fırından çıkartıp, ortasındaki yağlı yağlı kağıdı, fasulyeleri/nohutları alın',' Hamurun ortasının pişmesi için, 3-4 dakika daha fırına atın. Çıkartıp, sucukları ortasına dizin.','Üzerine rende peyniri ekleyin. Krema dolgu malzemesini ekleyin ve fırına atın. 20-25 dakika daha alt-üst fan modunda pişirin. Üzeri renk alınca fırından çıkarın.']
+                    },
+                
+                   
+                ]
+            },
+            {
+                id: 'in',
+                name: 'Hindistan',
+                coverImage: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=800',
+                dishes: [
+                    {
+                        id: 'in1',
+                        name: 'Tavuk Tikka Masala',
+                        description: 'Baharatlı ve kremalı domates sosunda marine edilmiş tavuk.',
+                        image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80&w=800',
+                        time: '50 dk',
+                        servings: '3 Kişilik',
+                        calories: '450 kcal',
+                        ingredients: ['Tavuk göğsü', 'Garam Masala baharatı', 'Yoğurt', 'Domates püresi', 'Krema'],
+                        recipe: ['Tavukları yoğurt ve baharatlarla marine edin.', 'Tavada tavukları pişirin.', 'Ayrı bir tavada soğan, baharat ve domatesle sos yapın.', 'Tavukları sosa ekleyip krema ile kıvam verin.']
+                    },
+                    {
+                        id: 'in2',
+                        name: 'Biryani',
+                        description: 'Baharatlı pirinç, et ve safranın muhteşem karışımı.',
+                        image: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&q=80&w=800',
+                        time: '90 dk',
+                        servings: '4 Kişilik',
+                        calories: '500 kcal',
+                        ingredients: ['Basmati pirinç', 'Tavuk veya kuzu eti', 'Safran', 'Kakule, tarçın', 'Kızarmış soğan'],
+                        recipe: ['Eti yoğurt ve baharatlarla marine edin.', 'Pirinci yarı pişmiş haşlayın.', 'Tencereye sırasıyla et ve pirinci katmanlar halinde dizin.', 'Kısık ateşte demleyerek pişirin.']
+                    },
+                    {
+                        id: 'in3',
+                        name: 'Naan',
+                        description: 'Tandoor fırınında pişen yumuşak Hint ekmeği.',
+                        image: 'https://images.unsplash.com/photo-1626074353765-517a681e40be?auto=format&fit=crop&q=80&w=800',
+                        time: '60 dk',
+                        servings: '4 Adet',
+                        calories: '250 kcal',
+                        ingredients: ['Un', 'Yoğurt', 'Maya', 'Sarımsak (isteğe bağlı)', 'Tereyağı'],
+                        recipe: ['Hamuru yoğurup mayalandırın.', 'İnce şekilde açın.', 'Çok sıcak tavada veya fırında kabarana kadar pişirin.', 'Sıcakken üzerine tereyağı sürün.']
+                    },
+                    {
+                        id: 'in4',
+                        name: 'Samosa',
+                        description: 'İçi patates ve bezelye dolgulu, kızarmış üçgen börek.',
+                        image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&q=80&w=800',
+                        time: '45 dk',
+                        servings: '6 Adet',
+                        calories: '200 kcal/adet',
+                        ingredients: ['Un (hamur için)', 'Haşlanmış patates', 'Bezelye', 'Kimyon, kişniş', 'Yeşil biber'],
+                        recipe: ['Sert bir hamur hazırlayın.', 'İç harcı baharatlarla kavurun.', 'Hamuru açıp külah şekli verin ve harcı doldurun.', 'Derin yağda kızartın.']
+                    },
+                    {
+                        id: 'in5',
+                        name: 'Palak Paneer',
+                        description: 'Ispanak püresi içinde küp peynir (paneer) yemeği.',
+                        image: 'https://images.unsplash.com/photo-1589647363585-f4a7d3877b10?auto=format&fit=crop&q=80&w=800',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Ispanak', 'Paneer peyniri (veya hellim)', 'Soğan, domates', 'Zencefil, sarımsak', 'Krema'],
+                        recipe: ['Ispanakları haşlayıp püre yapın.', 'Peynirleri hafifçe kızartın.', 'Soğan ve baharatları kavurup ıspanağı ekleyin.', 'En son peynir ve kremayı ekleyip sıcak servis yapın.']
+                    },
+                    {
+                        id: 'in6',
+                        name: 'Tandoori Tavuk',
+                        description: 'Yoğurt ve baharatlarla marine edilip fırınlanmış kırmızı tavuk.',
+                        image: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&q=80&w=800',
+                        time: '50 dk',
+                        servings: '4 Kişilik',
+                        calories: '300 kcal',
+                        ingredients: ['Tavuk but', 'Yoğurt', 'Kırmızı toz biber (Kashmiri)', 'Limon suyu', 'Garam masala'],
+                        recipe: ['Tavukların üzerine çizik atın.', 'Tüm malzemelerle en az 4 saat marine edin.', 'Yüksek ısıda fırında veya ızgarada pişirin.']
+                    },
+                    {
+                        id: 'in7',
+                        name: 'Rogan Josh',
+                        description: 'Keşmir bölgesine ait aromatik kuzu eti yemeği.',
+                        image: 'https://images.unsplash.com/photo-1545247181-516773cae754?auto=format&fit=crop&q=80&w=800',
+                        time: '2 Saat',
+                        servings: '4 Kişilik',
+                        calories: '600 kcal',
+                        ingredients: ['Kuzu eti', 'Kashmiri biberi', 'Yoğurt', 'Kakule, karanfil', 'Zencefil'],
+                        recipe: ['Baharatları yağda kokusu çıkana kadar kavurun.', 'Etleri ekleyip mühürleyin.', 'Yoğurt ve az su ekleyip etler yumuşayana kadar kısık ateşte pişirin.']
+                    },
+                    {
+                        id: 'in8',
+                        name: 'Dal Makhani',
+                        description: 'Siyah mercimek ve barbunyanın krema ve tereyağı ile piştiği güveç.',
+                        image: 'https://sankrantigroup.com/wp-content/uploads/2025/03/DAL-MAKHANI.jpg',
+                        time: '120 dk',
+                        servings: '4 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Siyah mercimek (Urad dal)', 'Barbunya', 'Tereyağı', 'Krema', 'Domates püresi'],
+                        recipe: ['Mercimekleri bir gece önceden ıslatın.', 'Yumuşayana kadar haşlayın.', 'Bol tereyağında baharat ve domatesi kavurup mercimeği ekleyin.', 'Kısık ateşte özdeşleşene kadar pişirin.']
+                    },
+                    {
+                        id: 'in9',
+                        name: 'Gulab Jamun',
+                        description: 'Kızartılmış süt toplarının güllü şerbet içinde sunumu.',
+                        image: 'https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480_1_5x/img/recipe/ras/Assets/92282c9b3bfada855d2fc8f5b255207d/Derivates/f1f0ec9e89a554ec5519b24cdcc9e331e3f9c5cc.jpg',
+                        time: '45 dk',
+                        servings: '4 Kişilik',
+                        calories: '300 kcal',
+                        ingredients: ['Süt tozu', 'Un', 'Tereyağı', 'Şerbeti için: Şeker, su, gül suyu'],
+                        recipe: ['Hamur malzemelerini karıştırıp küçük toplar yapın.', 'Kısık ateşte yavaşça kızartın.', 'Sıcak topları ılık şerbetin içine atıp çekmesini bekleyin.']
+                    }
+                ]
+            },
+            {
+                id: 'us',
+                name: 'ABD',
+                coverImage: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=800',
+                dishes: [
+                    {
+                        id: 'us1',
+                        name: 'Cheeseburger',
+                        description: 'Klasik Amerikan lezzeti, sulu köfte ve erimiş peynir.',
+                        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=800',
+                        time: '20 dk',
+                        servings: '1 Kişilik',
+                        calories: '600 kcal',
+                        ingredients: ['Burger köftesi', 'Cheddar peyniri', 'Burger ekmeği', 'Turşu', 'Soğan', 'Marul'],
+                        recipe: ['Köfteyi yüksek ateşte pişirin.', 'Pişmeye yakın üzerine peyniri koyup eritin.', 'Ekmeği hafifçe kızartın.', 'Malzemeleri sırasıyla dizip sos ekleyerek kapatın.']
+                    },
+                    {
+                        id: 'us2',
+                        name: 'Buffalo Wings',
+                        description: 'Acı soslu, yanında mavi peynir sosuyla servis edilen tavuk kanatları.',
+                        image: 'https://www.allrecipes.com/thmb/2xyo81ibKdZDGpuKvYPbmBOQ5-I=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/151266-boneless-buffalo-wings-DDMFS-4x3-403-e644c300766146e8b9b7054e792891b6.jpg',
+                        time: '40 dk',
+                        servings: '2 Kişilik',
+                        calories: '550 kcal',
+                        ingredients: ['Tavuk kanatları', 'Acı sos (Hot sauce)', 'Tereyağı', 'Sarımsak tozu', 'Kereviz sapı'],
+                        recipe: ['Kanatları fırında veya yağda çıtır olana kadar kızartın.', 'Tereyağı ve acı sosu tavada ısıtın.', 'Kızaran kanatları bu sosa bulayın.', 'Kereviz sapı ve sosla servis edin.']
+                    },
+                    {
+                        id: 'us3',
+                        name: 'Mac & Cheese',
+                        description: 'Fırınlanmış, bol peynirli ve kremalı makarna.',
+                        image: 'https://www.seriouseats.com/thmb/_WO9JEI2V2i2bFBqfiPVwHbLvg0=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/20241107-SEA-The-Food-Labs-Ultra-Gooey-Stovetop-Mac-and-Cheese-Recipe-MorganHuntGlaze-2-16a276ff0ce34f7e988b0b74c37cd229.jpg',
+                        time: '35 dk',
+                        servings: '4 Kişilik',
+                        calories: '450 kcal',
+                        ingredients: ['Dirsek makarna', 'Cheddar peyniri', 'Süt', 'Un, Tereyağı', 'Ekmek kırıntısı'],
+                        recipe: ['Makarnayı haşlayın.', 'Tereyağı ve unla beşamel sos yapıp peyniri ekleyin.', 'Makarna ve sosu karıştırıp fırın kabına alın.', 'Üzerine ekmek kırıntısı serpip fırınlayın.']
+                    },
+                    {
+                        id: 'us4',
+                        name: 'Apple Pie',
+                        description: 'Tarçınlı elma dolgulu, kafes hamurlu klasik turta.',
+                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShGvV_1zfnQCiMnjXk7by4zrlZKJQw1yvBIg&s',
+                        time: '60 dk',
+                        servings: '8 Dilim',
+                        calories: '300 kcal/dilim',
+                        ingredients: ['Turta hamuru', 'Yeşil elma', 'Tarçın', 'Şeker', 'Tereyağı'],
+                        recipe: ['Elmaları soyup dilimleyin, şeker ve tarçınla harmanlayın.', 'Hamurun yarısını kaba yayın, elmaları doldurun.', 'Kalan hamurla üzerini kapatın veya şerit yapın.', 'Altın sarısı olana kadar fırınlayın.']
+                    },
+                    {
+                        id: 'us5',
+                        name: 'BBQ Ribs',
+                        description: 'Saatlerce pişmiş, kemikten ayrılan barbekü soslu kaburga.',
+                        image: 'https://www.allrecipes.com/thmb/I2ENWJQG1mb2b5OSXPqQudzlzJw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/220987-Baked-BBQ-Baby-Back-Ribs-mfs-041-77a42b0ce0f0424e9aeec2b22664f1aa.jpg',
+                        time: '3 Saat',
+                        servings: '3 Kişilik',
+                        calories: '700 kcal',
+                        ingredients: ['Dana veya domuz kaburga', 'BBQ sos', 'Esmer şeker', 'Paprika', 'Sarımsak tozu'],
+                        recipe: ['Kaburgaları baharatlarla ovup folyoya sarın.', 'Düşük ısıda fırında 2.5 saat pişirin.', 'Folyoyu açıp bol BBQ sos sürün.', 'Üzeri karamelize olana kadar yüksek ısıda fırınlayın.']
+                    },
+                    {
+                        id: 'us6',
+                        name: 'New York Hot Dog',
+                        description: 'Sosis, hardal ve lahana turşusu (sauerkraut) ile sokak lezzeti.',
+                        image: 'https://www.thespruceeats.com/thmb/l98FQUyw5fjZr2HCtNCEzkHsl2Y=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/new-york-hot-dogs-recipe-333560-hero-01-6be391df91774698aa490a45cd4f29c1.jpg',
+                        time: '10 dk',
+                        servings: '1 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Sosis', 'Sandviç ekmeği', 'Sauerkraut (Lahana turşusu)', 'Baharatlı hardal', 'Soğan sosu'],
+                        recipe: ['Sosisi ızgarada veya suda pişirin.', 'Ekmeği buharda ısıtın.', 'Sosisi ekmeğe koyup üzerine bolca turşu ve hardal ekleyin.']
+                    },
+                    {
+                        id: 'us7',
+                        name: 'Pancakes',
+                        description: 'Kahvaltıların vazgeçilmezi, kabarık ve şuruplu hamur işi.',
+                        image: 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?auto=format&fit=crop&q=80&w=800',
+                        time: '20 dk',
+                        servings: '2 Kişilik',
+                        calories: '250 kcal',
+                        ingredients: ['Un, süt, yumurta', 'Kabartma tozu', 'Şeker', 'Akçaağaç şurubu (Maple syrup)', 'Tereyağı'],
+                        recipe: ['Kuru ve sıvı malzemeleri karıştırın (fazla çırpmayın).', 'Yağlanmış tavaya kepçeyle dökün.', 'Göz göz olunca çevirin.', 'Üst üste dizip şurup ve tereyağı ile servis yapın.']
+                    },
+                    {
+                        id: 'us8',
+                        name: 'Caesar Salad',
+                        description: 'Marul, kruton ve özel sosuyla dünyaca ünlü salata.',
+                        image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?auto=format&fit=crop&q=80&w=800',
+                        time: '15 dk',
+                        servings: '2 Kişilik',
+                        calories: '300 kcal',
+                        ingredients: ['Romaine marul', 'Parmesan peyniri', 'Kruton (Kıtır ekmek)', 'Sezar sos', 'Tavuk (isteğe bağlı)'],
+                        recipe: ['Marulları iri doğrayın.', 'Sos ile iyice harmanlayın.', 'Üzerine kruton ve bol parmesan rendesi ekleyin.']
+                    },
+                    {
+                        id: 'us9',
+                        name: 'Brownie',
+                        description: 'İçi nemli, üstü çıtır çikolatalı kek.',
+                        image: 'https://www.glutensizhayat.com.tr/wp-content/uploads/2023/03/glutensiz-brownie-tarifi-01.jpg',
+                        time: '40 dk',
+                        servings: '9 Dilim',
+                        calories: '350 kcal/dilim',
+                        ingredients: ['Bitter çikolata', 'Tereyağı', 'Şeker', 'Un, Yumurta', 'Ceviz (isteğe bağlı)'],
+                        recipe: ['Çikolata ve tereyağını eritin.', 'Şeker ve yumurtayı köpürene kadar çırpın.', 'Tüm malzemeleri karıştırıp kalıba dökün.', 'İçi hafif nemli kalacak şekilde 180 derecede pişirin.']
+                    }
+                    
+                ]
+            },
+            {
+                id: 'cn',
+                name: 'Çin',
+                coverImage: 'https://imgrosetta.mynet.com.tr/file/18356361/18356361-1200x675.jpg',
+                dishes: [
+                    {
+                        id: 'cn1',
+                        name: 'Pekin Ördeği',
+                        description: 'Çıtır derili, özel soslu geleneksel lezzet.',
+                        image: 'https://koy-tav.com.tr/uploads/Contents/310134342234.jpg',
+                        time: '5 Saat',
+                        servings: '4 Kişilik',
+                        calories: '700 kcal',
+                        ingredients: ['Bütün ördek', 'Bal', 'Soya sosu', 'Zencefil', 'Çin baharatları'],
+                        recipe: ['Ördeğin içine hava basarak derisini etinden ayırın.', 'Sıcak şerbetli suyla haşlayıp kurutun.', 'Özel fırında asarak pişirin.', 'İnce dilimleyip krep ve sosla servis yapın.']
+                    },
+                    {
+                        id: 'cn2',
+                        name: 'Kung Pao Tavuk',
+                        description: 'Yer fıstığı, sebzeler ve acı biberle wok tavada yapılan tavuk yemeği.',
+                        image: 'https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&q=80&w=800',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '450 kcal',
+                        ingredients: ['500g Tavuk göğsü', 'Yer fıstığı', 'Kuru acı biber', 'Taze soğan', 'Soya sosu', 'Zencefil', 'Sarımsak', 'Susam yağı'],
+                        recipe: ['Tavukları küp doğrayıp soya sosuyla marine edin.', 'Wok tavayı kızdırıp fıstıkları ve kuru biberleri kavurun.', 'Tavukları ekleyip yüksek ateşte pişirin.', 'Sos malzemelerini ve taze soğanı ekleyip kıvam alana kadar çevirin.']
+                    },
+                    {
+                        id: 'cn3',
+                        name: 'Çin Böreği (Spring Rolls)',
+                        description: 'İçi sebzeli, dışı çıtır çıtır kızarmış rulo börek.',
+                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2np2sV_l5Cb8oOc-LbRmwhxLYFV5MKhUMdA&s',
+                        time: '45 dk',
+                        servings: '8 Adet',
+                        calories: '180 kcal/adet',
+                        ingredients: ['Yufka veya pirinç kağıdı', 'Lahana', 'Havuç', 'Soya filizi', 'Kıyma (isteğe bağlı)', 'Soya sosu', 'Kızartma yağı'],
+                        recipe: ['Sebzeleri ince şeritler halinde doğrayıp hafifçe soteleyin.', 'Soğuyan harcı yufkaların içine koyup rulo yapın.', 'Uçlarını suyla yapıştırın.', 'Kızgın yağda altın sarısı olana kadar kızartın.', 'Tatlı ekşi sos ile servis yapın.']
+                    },
+                    {
+                        id: 'cn4',
+                        name: 'Chow Mein',
+                        description: 'Sebzeli ve tavuklu, soya soslu kızarmış Çin eriştesi.',
+                        image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800',
+                        time: '25 dk',
+                        servings: '2 Kişilik',
+                        calories: '400 kcal',
+                        ingredients: ['Çin eriştesi (Noodle)', 'Tavuk şeritleri', 'Lahana', 'Havuç', 'Soya sosu', 'İstiridye sosu', 'Sarımsak'],
+                        recipe: ['Erişteleri haşlayıp süzün.', 'Tavukları yüksek ateşte soteleyin.', 'Sebzeleri ekleyip diriliği gidene kadar çevirin.', 'Erişte ve sosları ekleyip bütünleşene kadar wok tavada karıştırın.']
+                    },
+                    {
+                        id: 'cn5',
+                        name: 'Dumpling (Çin Mantısı)',
+                        description: 'Buharda pişirilmiş veya haşlanmış, içi et ve sebze dolgulu hamur işi.',
+                        image: 'https://www.unileverfoodsolutions.com.tr/dam/global-ufs/mcos/TURKEY/calcmenu/recipes/TR-recipes/general/sebzeli-%C3%A7in-mant%C4%B1s%C4%B1-dim-sum/main-header.jpg',
+                        time: '60 dk',
+                        servings: '4 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Mantı hamuru', 'Kıyma', 'Çin lahanası', 'Taze soğan', 'Zencefil', 'Soya sosu', 'Susam yağı'],
+                        recipe: ['Kıyma, ince kıyılmış lahana ve baharatları yoğurun.', 'Hamurdan yuvarlaklar açıp ortasına harç koyun.', 'Kenarlarını pileli şekilde kapatın.', 'Buhar sepetinde 15-20 dakika pişirin veya suda haşlayın.']
+                    },
+                    {
+                        id: 'cn6',
+                        name: 'Mapo Tofu',
+                        description: 'Acı soslu, kıymalı ve yumuşak tofu yemeği.',
+                        image: 'https://www.cookerru.com/wp-content/uploads/2022/06/mapo-tofu-recipe-preview-feature.jpg',
+                        time: '30 dk',
+                        servings: '3 Kişilik',
+                        calories: '300 kcal',
+                        ingredients: ['Tofu (küp doğranmış)', 'Dana kıyma', 'Doubanjiang (Acı fasulye ezmesi)', 'Sichuan biberi', 'Sarımsak', 'Taze soğan'],
+                        recipe: ['Kıymayı kavurun.', 'Acı fasulye ezmesi, sarımsak ve zencefili ekleyin.', 'Su veya et suyu ilave edip kaynatın.', 'Tofuları nazikçe ekleyip sosu çekmesini bekleyin.', 'Sichuan biberi ve taze soğan serpip servis yapın.']
+                    },
+                    {
+                        id: 'cn7',
+                        name: 'Kızarmış Pirinç (Fried Rice)',
+                        description: 'Yumurta, sebzeler ve soya sosu ile kavrulmuş pirinç.',
+                        image: 'https://d17wu0fn6x6rgz.cloudfront.net/img/w/tarif/ogt/kizarmis-pilav.webp',
+                        time: '20 dk',
+                        servings: '2 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Haşlanmış soğuk pirinç', '2 yumurta', 'Bezelye', 'Havuç (küp)', 'Taze soğan', 'Soya sosu', 'Susam yağı'],
+                        recipe: ['Wok tavada yumurtaları çırparak pişirip kenara alın.', 'Sebzeleri soteleyin.', 'Soğuk pirinci ekleyip tane tane olana kadar kavurun.', 'Soya sosu ve yumurtaları ekleyip harmanlayın.']
+                    },
+                    {
+                        id: 'cn8',
+                        name: 'Wonton Çorbası',
+                        description: 'İnce hamurlu karidesli veya kıymalı mantı çorbası.',
+                        image: 'https://d2lswn7b0fl4u2.cloudfront.net/photos/pg-tom-yum-soup-1635167707.jpg',
+                        time: '45 dk',
+                        servings: '4 Kişilik',
+                        calories: '250 kcal',
+                        ingredients: ['Wonton hamuru', 'Karides veya kıyma', 'Tavuk suyu', 'Pak Choy (Çin lahanası)', 'Susam yağı', 'Yeşil soğan'],
+                        recipe: ['İç harcı hamura koyup bohça şeklinde kapatın.', 'Tavuk suyunu zencefil ve sarımsakla kaynatın.', 'Wontonları suda haşlayın.', 'Çorba kasesine wontonları ve sıcak et suyunu koyup Pak Choy ile servis edin.']
+                    },
+                    {
+                        id: 'cn9',
+                        name: 'Hot Pot',
+                        description: 'Masada kaynayan et suyunda pişirilen ince et ve sebzeler.',
+                        image: 'https://static01.nyt.com/images/2024/02/05/multimedia/ND-hot-pot-ljmf/ND-hot-pot-ljmf-videoSixteenByNineJumbo1600.jpg',
+                        time: '90 dk',
+                        servings: '4 Kişilik',
+                        calories: '500 kcal',
+                        ingredients: ['Et suyu (Acılı/Acısız)', 'İnce dilim dana eti', 'Mantar çeşitleri', 'Tofu', 'Çin marulu', 'Erişte', 'Fıstık sosu'],
+                        recipe: ['Masaya elektrikli ocak ve büyük bir tencere koyun.', 'Et suyunu kaynatın.', 'Herkes kendi istediği malzemeyi (et, sebze) kaynayan suya batırıp pişirir.', 'Pişen yiyecekleri fıstık sosuna batırarak yiyin.']
+                    }
+                ]
+            },
+            {
+                id: 'es',
+                name: 'İspanya',
+                coverImage: 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&q=80&w=800',
+                dishes: [
+                    {
+                        id: 'es1',
+                        name: 'Paella',
+                        description: 'Deniz ürünleri ve safranlı İspanyol pilavı.',
+                        image: 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?auto=format&fit=crop&q=80&w=800',
+                        time: '60 dk',
+                        servings: '4 Kişilik',
+                        calories: '500 kcal',
+                        ingredients: ['Pirinç', 'Safran', 'Karides', 'Midye', 'Tavuk', 'Bezelye'],
+                        recipe: ['Geniş bir tavada etleri ve sebzeleri soteleyin.', 'Pirinci ekleyip kavurun.', 'Safranlı sıcak suyu ekleyin.', 'Deniz ürünlerini dizip suyunu çekene kadar karıştırmadan pişirin.']
+                    },
+
+                    {
+                        id: 'es2',
+                        name: 'Gazpacho',
+                        description: 'Lezzeti doyumsuz ve yapımı oldukça kolay olan gazpacho için evde bulunabilecek malzemelerden yararlanabilirsiniz .',
+                        image: 'https://assets.bonappetit.com/photos/57aca0e0f1c801a1038bc671/16:9/w_3327,h_1871,c_limit/summer-gazpacho.jpg',
+                        time: '15 dk',
+                        servings: '2 Kişilik',
+                        calories: '50 kcal',
+                        ingredients: ['4 Adet  Domates,1 Adet Salatalık,1 Yeşil Biber', '1 Yemek kaşığı zeytin yağı, 1.5 Yemek kaşığı üzüm sirkesi', 'Bir miktar karabuğday  ', 'Tuz karabiber'],
+                        recipe: ['Öncelikle malzemeleri yıkayıp karbonatlı suda 10 dakika bekletelim.', 'Karabuğdayları ufalayalım .', 'Sebzeleri ufak biççimde dilimleyelim.', 'Ardından karabuğday ve sebzeleri karıştıralım.', 'Karışıkma bir miktar su ekleyerek tüketebiliriz']
+                    },
+
+                    {
+                        id: 'es3',
+                        name: 'Tortilla Omleti',
+                        description: 'İnce ince dilimlenmiş içi bol patatesli bir omlet tarifi.',
+                        image: 'https://yumurtakapinda.com/wp-content/uploads/2025/10/tortilla-de-patatas.webp',
+                        time: '45 dk',
+                        servings: '2 Kişilik',
+                        calories: '250 kcal',
+                        ingredients: ['2 Adet Patates,1 Adet soğan', '1 Çay bardağı sıvı bardağı ', '', '3 Adet Yumurta ', '1 Çay kaşığı tuz ', '1 Çay kaşığı karabiber'],
+                        recipe: ['İspanyol omleti tortilla için küp küp doğranmış soğanları sıvı yağda kavurun', 'Ayrı yerde yumurtayı çırpın,tuz ve karabiber ekleyip karıştırın.', 'İçine kavurduğunuz patates soğanı ekleyin,Kaşar peynirini ekleyin.', 'Tavanıza yağı koyup ısınana kadar bekleyin ardından malzemeleri koyarak altı kısık biçimde pişirelim.', 'Altını ve üstünü iyice kızarttıktan sonra servis edip yiyebilirsiniz Afiyet Olsun']
+                    },
+
+
+                    {
+
+                        id: 'es4',
+                        name: 'Pisto Castellano',
+                        description: 'Lezzetli ve Kolay İspanyol Sebze Yemeği.',
+                        image: 'https://expoaguilas.com/wp-content/uploads/2024/04/bowl-pisto-spanish-stew-with-eggplants-scaled.jpg',
+                        time: '25 dk',
+                        servings: '2 Kişilik',
+                        calories: '200 kcal',
+                        ingredients: ['2 Adet kırmızı biber,1 Adet yeşil biber,1 Adet soğan, 2 Diş sarımsak, 4 Adet Domates', '3 Yemek kaşığı zeytin yağı ', 'Tuz Ve Karabiber', '1/2 Dal Maydanoz',],
+                        recipe: ['Sebzeleri ince ince doğrayalım.', 'Domatesleri de soyup ardından rendeleyelin .', 'Soğanı Ve sarımsağı kavurun.', 'Sonra üzerine doğradığımız sebzeleri ekleyelim , Ardından baharatlandıralım.', 'İsteğe bağlı maydanoz ekleyerek servis edelim',],
+                    },
+                    {
+                        id: 'es5',
+                        name: 'Churros',
+                        description: 'Kızarmış hamur tatlısı, çikolata sosu ile.',
+                        image: 'https://images.unsplash.com/photo-1624371414361-e670edf4898d?auto=format&fit=crop&q=80&w=800',
+                        time: '30 dk',
+                        servings: '4 Kişilik',
+                        calories: '400 kcal',
+                        ingredients: ['Un, su, tereyağı', 'Şeker', 'Tarçın', 'Çikolata sosu'],
+                        recipe: ['Hamuru pişirip sıkma torbasına alın.', 'Kızgın yağa şeritler halinde sıkın.', 'Şeker ve tarçına bulayıp çikolatayla servis yapın.']
+                    },
+                    {
+                        id: 'es6',
+                        name: 'Patatas Bravas',
+                        description: 'Acı soslu kızarmış küp patatesler.',
+                        image: 'https://www.allrecipes.com/thmb/n_OOwj92X4rpCZyQ8sULHBUR95k=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/230569-chef-johns-patatas-brazas-ddmfs-2X3-0917-2e7985bf896d4ea0b1baa2a0c826ea0d.jpg',
+                        time: '25 dk',
+                        servings: '2 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Patates', 'Acı biber', 'Domates püresi', 'Sirke', 'Paprika'],
+                        recipe: ['Patatesleri küp doğrayıp kızartın.', 'Acı sosu hazırlayıp üzerine dökün.']
+                    },
+                    {
+                        id: 'es7',
+                        name: 'Gambas al Ajillo',
+                        description: 'Sarımsaklı ve acı biberli karides.',
+                        image: 'https://cdn.jwplayer.com/v2/media/eMNPpf0C/thumbnails/rjqCKQMX.jpg?width=1280',
+                        time: '10 dk',
+                        servings: '2 Kişilik',
+                        calories: '250 kcal',
+                        ingredients: ['Karides', 'Bol sarımsak', 'Zeytinyağı', 'Kuru acı biber', 'Maydanoz'],
+                        recipe: ['Yağı kızdırıp sarımsak ve biberi atın.', 'Karidesleri ekleyip renk değiştirene kadar (2-3 dk) pişirin.', 'Sıcak servis yapın.']
+                    },
+                    {
+                        id: 'es8',
+                        name: 'Pulpo a la Gallega',
+                        description: 'Galiçya usulü haşlanmış ahtapot.',
+                        image: 'https://www.giallozafferano.com/images/315-31557/galician-style-octopus-pulpo-a-la-gallega_1200x800.jpg',
+                        time: '60 dk',
+                        servings: '2 Kişilik',
+                        calories: '300 kcal',
+                        ingredients: ['Ahtapot', 'Patates', 'Tatlı toz biber (Paprika)', 'Zeytinyağı', 'Kaya tuzu'],
+                        recipe: ['Ahtapotu yumuşayana kadar haşlayın.', 'Haşlanmış patates dilimleri üzerine ahtapotu doğrayın.', 'Bol zeytinyağı, paprika ve tuz serpin.']
+                    },
+                    {
+                        id: 'es9',
+                        name: 'Croquetas',
+                        description: 'Beşamel soslu ve jambonlu kızarmış kroketler.',
+                        image: 'https://www.seriouseats.com/thmb/WZDGVzhQw6wDrWZlYgG7QFXEi4s=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/20250304-CroquetasdeJamon-AmandaSuarez-14-e45747d8684c4667aa1b48a9445df903.jpg',
+                        time: '60 dk',
+                        servings: '6 Adet',
+                        calories: '150 kcal/adet',
+                        ingredients: ['Beşamel sos', 'Jambon veya tavuk', 'Un, yumurta', 'Galeta unu'],
+                        recipe: ['Koyu kıvamlı beşamel içine malzemeyi koyup soğutun.', 'Şekil verip un, yumurta ve galeta ununa batırın.', 'Kızgın yağda kızartın.']
+                    }
+                    
+
+                ]
+            },
+
+
+            {
+                id: 'gr',
+                name: 'Yunanistan',
+                coverImage: 'https://i.lezzet.com.tr/images-xxlarge-recipe/patlican-musakka-504499b8-bd45-4a77-b59b-6b6de4a4d2fc.jpg',
+                dishes: [
+                    {
+                        id: 'gr1',
+                        name: 'Musakka',
+                        description: 'Patlıcan, patates ve kıymanın beşamel sosla buluşması.',
+                        image: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgsiker8i_jCgxjcd6ziY66eDQXGso6ItqUZPxMwGVuvU1TJ3FUatl3HZk6GoeZx0emQj7KrlNA5JtbYw4o68KvxBbBirGguNGzksVcdnLx5VbAXyFY2xqMnUd_srPXqma-CIg2MaoU9u_e/w1200-h630-p-k-no-nu/patl%C4%B1can+musakka1.jpg',
+                        time: '90 dk',
+                        servings: '6 Kişilik',
+                        calories: '600 kcal',
+                        ingredients: ['Patlıcan', 'Patates', 'Kıyma', 'Domates', 'Beşamel sos'],
+                        recipe: ['Sebzeleri halka doğrayıp hafifçe kızartın.', 'Kıymalı bir sos hazırlayın.', 'Tepsiye sırasıyla sebze ve kıyma dizin.', 'En üste beşamel sos döküp fırınlayın.']
+                    },
+                    {
+                        id: 'gr2',
+                        name: 'Caciki (Tzatziki)',
+                        description: 'Süzme yoğurt, salatalık ve sarımsaklı meze.',
+                        image: 'https://d17wu0fn6x6rgz.cloudfront.net/img/w/tarif/ogt/cacik.webp',
+                        time: '10 dk',
+                        servings: '4 Kişilik',
+                        calories: '120 kcal',
+                        ingredients: ['Süzme yoğurt', 'Salatalık', 'Sarımsak', 'Dereotu', 'Zeytinyağı'],
+                        recipe: ['Salatalıkları rendeleyip suyunu sıkın.', 'Yoğurt, ezilmiş sarımsak ve dereotu ile karıştırın.', 'Üzerine zeytinyağı gezdirin.']
+                    },
+                    {
+                        id: 'gr3',
+                        name: 'Souvlaki',
+                        description: 'Şişte ızgara edilmiş marine et (tavuk veya domuz).',
+                        image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&q=80&w=800',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Kuşbaşı et', 'Limon suyu', 'Kekik', 'Zeytinyağı'],
+                        recipe: ['Etleri limon, zeytinyağı ve kekik ile marine edin.', 'Şişe dizip ızgarada pişirin.', 'Pide ekmeği ile servis yapın.']
+                    },
+                    {
+                        id: 'gr4',
+                        name: 'Greek Salad (Horiatiki)',
+                        description: 'Taze sebzeler ve bütün bir dilim beyaz peynirle yapılan salata.',
+                        image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=800',
+                        time: '10 dk',
+                        servings: '2 Kişilik',
+                        calories: '250 kcal',
+                        ingredients: ['Domates', 'Salatalık', 'Kırmızı soğan', 'Kalamata zeytini', 'Beyaz peynir (Feta)'],
+                        recipe: ['Sebzeleri iri doğrayın.', 'Üzerine bütün bir dilim beyaz peynir koyun.', 'Bol zeytinyağı ve kekik serpin.']
+                    },
+                    {
+                        id: 'gr5',
+                        name: 'Spanakopita',
+                        description: 'Ispanaklı ve peynirli Yunan böreği.',
+                        image: 'https://static01.nyt.com/images/2024/05/15/multimedia/15SPANAKOPITArex-cut-klhz/02SPANAKOPITArex-cut-klhz-mediumSquareAt3X.jpg',
+                        time: '60 dk',
+                        servings: '6 Dilim',
+                        calories: '300 kcal',
+                        ingredients: ['Filo hamuru (Baklavalık yufka)', 'Ispanak', 'Beyaz peynir', 'Soğan', 'Dereotu'],
+                        recipe: ['Ispanaklı peynirli harcı hazırlayın.', 'Yufkaları kat kat yağlayarak tepsiye dizin.', 'Arasına harcı koyup tekrar yufka ile kapatın.', 'Fırında çıtır olana kadar pişirin.']
+                    },
+                    {
+                        id: 'gr6',
+                        name: 'Dolmades',
+                        description: 'Zeytinyağlı pirinçli yaprak sarması.',
+                        image: 'https://ichef.bbci.co.uk/food/ic/food_16x9_1600/recipes/dolmades_72399_16x9.jpg',
+                        time: '50 dk',
+                        servings: '4 Kişilik',
+                        calories: '200 kcal',
+                        ingredients: ['Asma yaprağı', 'Pirinç', 'Soğan', 'Limon', 'Dereotu, Nane'],
+                        recipe: ['İç harcı hazırlayın.', 'Yaprakları sarın.', 'Tencereye dizip limonlu su ile pişirin.']
+                    },
+                    {
+                        id: 'gr7',
+                        name: 'Gyros',
+                        description: 'Döner benzeri, pide içinde servis edilen et.',
+                        image: 'https://www.barbecook.com/cdn/shop/articles/barbecook_030321_23625.jpg?v=1678958368',
+                        time: '30 dk',
+                        servings: '1 Kişilik',
+                        calories: '550 kcal',
+                        ingredients: ['İnce et dilimleri', 'Yunan pidesi', 'Caciki', 'Domates, Soğan', 'Patates kızartması'],
+                        recipe: ['Etleri baharatla pişirin.', 'Pidenin içine et, caciki, sebze ve patates kızartması koyup sarın.']
+                    },
+                    {
+                        id: 'gr8',
+                        name: 'Fasolada',
+                        description: 'Yunanistanın milli yemeği sayılan kuru fasulye çorbası.',
+                        image: 'https://www.mygreekdish.com/wp-content/uploads/2014/01/Traditional-Greek-bean-soup-recipe-Fasolada.jpeg',
+                        time: '90 dk',
+                        servings: '4 Kişilik',
+                        calories: '300 kcal',
+                        ingredients: ['Kuru fasulye', 'Havuç', 'Kereviz sapı', 'Zeytinyağı', 'Domates'],
+                        recipe: ['Fasulyeleri haşlayın.', 'Sebzeleri zeytinyağında soteleyin.', 'Hepsini birleştirip kısık ateşte pişirin.']
+                    },
+                    {
+                        id: 'gr9',
+                        name: 'Loukoumades',
+                        description: 'Lokma tatlısının Yunan versiyonu, bal ve tarçınlı.',
+                        image: 'https://www.recipesfromeurope.com/wp-content/uploads/2022/11/greek-loukoumades-recipe.jpg',
+                        time: '40 dk',
+                        servings: '4 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Mayalı hamur', 'Bal', 'Tarçın', 'Ceviz'],
+                        recipe: ['Hamurdan toplar yapıp kızartın.', 'Üzerine bal döküp tarçın ve ceviz serpin.']
+                    }
+                       
+                ]
+            },
+             
+          {
+                id: 'br',
+                name: 'Brezilya',
+                coverImage: 'https://i.lezzet.com.tr/images-xxlarge-recipe/feijoda_brezilya_mutfagi-053d07a3-1093-4dbe-a631-39086cde24d5.jpg',
+                dishes: [
+                    {
+                        id: 'br1',
+                        name: 'Feijoada',
+                        description: 'Siyah fasulye, kurutulmuş ve tütsülenmiş etlerle yapılan ulusal Brezilya güveci.',
+                        image: 'https://recetasdecocina.elmundo.es/wp-content/uploads/2025/01/feijoada-1024x683.jpg',
+                        time: '180 dk',
+                        servings: '6 Kişilik',
+                        calories: '800 kcal',
+                        ingredients: ['1 kg siyah fasulye', '500g kurutulmuş et', '250g domuz kaburgası', '1 adet soğan', '4 diş sarımsak', 'Defne yaprağı', 'Portakal dilimleri (servis için)'],
+                        recipe: ['Fasulyeyi ve etleri ayrı ayrı bir gece önceden suda bekletin.', 'Tüm etleri fasulyeyle birlikte büyük bir tencerede kaynatın.', 'Soğan ve sarımsağı kavurun, fasulye ve et suyuna ekleyin.', 'Kısık ateşte fasulye yumuşayana kadar 2-3 saat pişirin.', 'Pirinç ve portakal dilimleri ile servis yapın.']
+                    },
+                    {
+                        id: 'br2',
+                        name: 'Picanha',
+                        description: 'Özel bir kesim olan sığır budu, genellikle barbeküde (Churrasco) pişirilir.',
+                        image: 'https://hips.hearstapps.com/hmg-prod/images/del059924-picanhasteak-024-bjg-index-664d1411c61e0.jpg?crop=0.6666666666666666xw:1xh;center,top&resize=1200:*',
+                        time: '40 dk',
+                        servings: '4 Kişilik',
+                        calories: '750 kcal',
+                        ingredients: ['1 kg Picanha (Sığır eti)', 'Kalın deniz tuzu'],
+                        recipe: ['Eti 3-4 cm kalınlığında dilimleyin.', 'Dilimleri şişe geçirirken yağlı kısmın dışarı bakmasına dikkat edin.', 'Her tarafını kalın deniz tuzu ile kaplayın.', 'Önceden ısıtılmış mangalda veya fırında isteğe göre pişirin.', 'Servis yapmadan önce tuzu silkeleyin.']
+                    },
+                    {
+                        id: 'br3',
+                        name: 'Coxinha',
+                        description: 'Parçalanmış tavuk dolgulu, kızarmış, damla şeklindeki hamur işi.',
+                        image: 'https://delishglobe.com/wp-content/uploads/2024/10/Coxinha.png',
+                        time: '60 dk',
+                        servings: '12 Adet',
+                        calories: '250 kcal/adet',
+                        ingredients: ['500g Tavuk göğsü', '1 adet soğan', 'Süt, un, yumurta, galeta unu (kaplama için)', 'Ayçiçek yağı (kızartma için)'],
+                        recipe: ['Tavuğu haşlayın ve ince ince didikleyin.', 'Didiklenmiş tavuğu baharatlarla kavurun.', 'Tavuk suyu, süt ve un ile bir hamur hazırlayın.', 'Hamurdan parçalar alıp içine tavuk doldurun ve damla şekli verin.', 'Yumurta ve galeta ununa bulayıp kızgın yağda kızartın.']
+                    },
+                    {
+                        id: 'br4',
+                        name: 'Moqueca',
+                        description: 'Kremalı hindistan cevizi sütü, domates, biber ve palmiye yağı (Dendê) ile yapılan balık güveci.',
+                        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Moqueca.jpg/1200px-Moqueca.jpg',
+                        time: '50 dk',
+                        servings: '4 Kişilik',
+                        calories: '550 kcal',
+                        ingredients: ['500g Beyaz balık filetosu', '1 adet soğan', '2 adet domates', '1 adet yeşil biber', '200ml Hindistan cevizi sütü', '2 yemek kaşığı Dendê yağı', 'Kişniş'],
+                        recipe: ['Balığı limon suyu ve tuzla marine edin.', 'Soğan, domates ve biberleri ince ince doğrayın.', 'Geniş bir tencerede sebzeleri katmanlar halinde dizin.', 'Balığı sebzelerin üzerine yerleştirin.', 'Hindistan cevizi sütü ve Dendê yağını ekleyip kısık ateşte pişirin.', 'Taze kişniş ile servis yapın.']
+                    },
+                    {
+                        id: 'br5',
+                        name: 'Brigadeiro',
+                        description: 'Yoğunlaştırılmış süt, kakao tozu ve tereyağından yapılan geleneksel Brezilya trüfü.',
+                        image: 'https://www.mrsjoneskitchen.com/wp-content/uploads/2022/08/Brigadeiro-recipe.jpg',
+                        time: '20 dk',
+                        servings: '15 Adet',
+                        calories: '150 kcal/adet',
+                        ingredients: ['1 kutu yoğunlaştırılmış süt', '3 yemek kaşığı kakao tozu', '1 yemek kaşığı tereyağı', 'Çikolata rendesi (kaplama için)'],
+                        recipe: ['Tüm malzemeleri orta ateşte sürekli karıştırarak koyulaşana kadar pişirin.', 'Karışımı bir tabağa dökün ve buzdolabında soğutun.', 'Soğuyan karışımdan küçük toplar yapın.', 'Topları çikolata rendesine bulayıp servis yapın.']
+                    },
+                    {
+                        id: 'br6',
+                        name: 'Acarajé',
+                        description: 'Öğütülmüş kara gözlü bezelyeden yapılan, kızarmış, baharatlı börek.',
+                        image: 'https://static.itdg.com.br/images/640-440/cf3a57518454231bf80b2e74037068e4/3158-shutterstock-2156868181.jpg',
+                        time: '60 dk',
+                        servings: '8 Adet',
+                        calories: '300 kcal/adet',
+                        ingredients: ['500g kara gözlü bezelye', '1 adet soğan', 'Palmiye yağı (Dendê)', 'Tuz', 'Karides (doldurmak için)'],
+                        recipe: ['Kara gözlü bezelyeyi öğütüp soğan ve tuzla karıştırın.', 'Karışımı yumuşak bir köfte kıvamına getirin.', 'Dendê yağında kızartın.', 'Ortadan kesip içine karides, domates ve biber salçası ile doldurarak servis yapın.']
+                    },
+                    {
+                        id: 'br7',
+                        name: 'Pão de Queijo',
+                        description: 'Tipik Brezilya peynirli ekmeği, tapyoka unundan yapılır ve glütensizdir.',
+                        image: 'https://essareceitafunciona.com.br/wp-content/uploads/2022/07/Pao-de-queijo-Essa-Receita-Funciona-9.jpg',
+                        time: '40 dk',
+                        servings: '15 Adet',
+                        calories: '100 kcal/adet',
+                        ingredients: ['250g tapyoka nişastası', '1 su bardağı süt', '1/2 su bardağı sıvı yağ', '2 adet yumurta', '1 su bardağı rendelenmiş peynir (Mozzarella veya Parmesan)', 'Tuz'],
+                        recipe: ['Süt, yağ ve tuzu kaynatın, nişastanın üzerine dökün ve karıştırın.', 'Soğuduktan sonra yumurtaları ve peyniri ekleyip karıştırın.', 'Karışımdan küçük toplar yapın ve tepsiye dizin.', '180 derecede üzeri kızarana kadar pişirin.']
+                    },
+                    {
+                        id: 'br8',
+                        name: 'Pastel',
+                        description: 'İnce hamur içine et, peynir veya karides gibi çeşitli dolgular konulan, kızartılmış börek.',
+                        image: 'https://img.freepik.com/premium-fotograf/pastel-brezilya-atistirmaligi-geleneksel-brezilya-hamur-isi_538646-7128.jpg',
+                        time: '45 dk',
+                        servings: '8 Adet',
+                        calories: '350 kcal/adet',
+                        ingredients: ['Hazır milföy hamuru veya pastel hamuru', 'Kıyma veya peynir (dolgusu için)', 'Soğan, baharatlar'],
+                        recipe: ['Kıymalı harcı soğan ve baharatlarla kavurun.', 'Hamurları kare şeklinde kesin ve içine harcı koyun.', 'Kenarlarını çatalla kapatın.', 'Kızgın yağda altın rengi alana kadar kızartın.', 'Kağıt havlu üzerinde yağını süzdürün.']
+                    },
+                    {
+                        id: 'br9',
+                        name: 'Vatapá',
+                        description: 'Karides, yer fıstığı, hindistan cevizi sütü, Dendê yağı ve ekmek kırıntılarıyla yapılan kremalı bir güveç.',
+                        image: 'https://www.seara.com.br/wp-content/uploads/2025/09/vatapa-de-frango-seara-dagranja-portal-minha-receita.webp',
+                        time: '60 dk',
+                        servings: '4 Kişilik',
+                        calories: '600 kcal',
+                        ingredients: ['200g karides', '2 dilim ekmek içi', '200ml hindistan cevizi sütü', 'Yer fıstığı, kaju fıstığı', 'Dendê yağı', 'Soğan, sarımsak, kişniş'],
+                        recipe: ['Ekmek içini hindistan cevizi sütüyle ıslatın.', 'Tavada soğan, sarımsak, karides, fıstık ve baharatları kavurun.', 'Islatılmış ekmeği ve hindistan cevizi sütünü karışıma ekleyin.', 'Koyulaşana kadar pişirin ve Dendê yağı ile tatlandırın.', 'Pirinç veya Acarajé ile servis yapın.']
+                    },
+                ]
+            },
+
+            {
+                id: 'se',
+                name: 'İsveç',
+                coverImage: 'https://i.lezzet.com.tr/images-xxlarge/isvec-koftesi-7af91db5-f0b1-40a5-8ecc-73b8770058e0',
+                dishes: [
+                    {
+                        id: 'se1',
+                        name: 'Köttbullar (İsveç Köftesi)',
+                        description: 'Küçük kızarmış köfteler, kahverengi krema sos, haşlanmış patates ve lingonberry reçeli ile servis edilir.',
+                        image: 'https://i.lezzet.com.tr/images-xxlarge/isvec-koftesi-7af91db5-f0b1-40a5-8ecc-73b8770058e0',
+                        time: '45 dk',
+                        servings: '4 Kişilik',
+                        calories: '650 kcal',
+                        ingredients: ['500g kıyma (dana/domuz)', 'Ekmek kırıntıları, süt', '1 adet soğan', 'Krema', 'Et suyu', 'Lingonberry reçeli (servis için)'],
+                        recipe: ['Ekmek kırıntılarını sütle ıslatın.', 'Kıyma, rendelenmiş soğan ve ıslatılmış ekmek kırıntılarını karıştırın.', 'Küçük köfteler yapıp tereyağında kızartın.', 'Köfteleri tavadan alın, aynı tavada krema ve et suyuyla kahverengi sosu hazırlayın.', 'Köfteleri sosa ekleyip bir süre pişirin.', 'Patates ve lingonberry reçeli ile servis yapın.']
+                    },
+                    {
+                        id: 'se2',
+                        name: 'Surströmming',
+                        description: 'Fermente edilmiş Baltık ringa balığı, dünyanın en kötü kokan yiyeceklerinden biri olarak bilinir.',
+                        image: 'https://i.namu.wiki/i/MX5-NIM35yqFZMco7oq7OzRD7LSsHxFWllfwTdDTbQCg8TwaTY0q7UgjPUpd5PVf7xZitRqk5zE30RkXtnLKMQ.webp',
+                        time: '10 dk',
+                        servings: '2 Kişilik',
+                        calories: '200 kcal',
+                        ingredients: ['1 konserve Surströmming', 'İnce Lavaş (Tunnbröd)', 'Hafif haşlanmış patates', 'Kırmızı soğan, ekşi krema'],
+                        recipe: ['Konserve kutusunu dışarıda açın (kokusu nedeniyle).', 'Balıkları temizleyip kemiklerini çıkarın.', 'Lavaşın üzerine ince dilimlenmiş patates, balık ve ekşi krema/soğan koyun.', 'Dürüm yapıp tüketin (Genellikle açık havada).']
+                    },
+                    {
+                        id: 'se3',
+                        name: 'Semla',
+                        description: 'Kardamomlu buğday ekmeği, badem ezmesi ve krema dolgulu geleneksel tatlı çörek.',
+                        image: 'https://swedishspoon.com/wp-content/uploads/2020/02/DSC03612.jpg',
+                        time: '120 dk',
+                        servings: '8 Adet',
+                        calories: '400 kcal/adet',
+                        ingredients: ['Hamur için: un, süt, maya, tereyağı, kardamom', 'Dolgu için: badem ezmesi, krema, pudra şekeri'],
+                        recipe: ['Mayalı hamuru hazırlayıp küçük yuvarlaklar yapın.', 'Fırında pişirin.', 'Soğuduktan sonra üst kısmını kesin.', 'İçini badem ezmesi ve kremayla doldurun.', 'Kestiğiniz kapağı üzerine koyup pudra şekeri serpin.']
+                    },
+                    {
+                        id: 'se4',
+                        name: 'Gravlax',
+                        description: 'Tuz, şeker ve dereotu ile marine edilmiş çiğ somon filetosu.',
+                        image: 'https://assets.tmecosys.com/image/upload/t_web_rdp_recipe_584x480_1_5x/img/recipe/ras/Assets/99a704ce-5a97-4d08-ba00-1f46f818e698/Derivates/c61db6ae-ab9d-46c1-ae7c-5120a381da42.jpg',
+                        time: '72 saat (marine)',
+                        servings: '6 Kişilik',
+                        calories: '250 kcal',
+                        ingredients: ['500g taze somon filetosu', '3 yemek kaşığı deniz tuzu', '3 yemek kaşığı şeker', 'Bir demet taze dereotu', 'Beyaz biber'],
+                        recipe: ['Somonu yıkayıp kurulayın.', 'Tuz, şeker ve beyaz biberi karıştırın.', 'Karışımı somonun her tarafına bolca sürün.', 'Üzerini bol dereotu ile kaplayın.', 'Streç filme sarıp buzdolabında 3 gün bekletin (her gün çevirin).', 'İnce dilimleyerek hardallı sos ile servis yapın.']
+                    },
+                    {
+                        id: 'se5',
+                        name: 'Toast Skagen',
+                        description: 'Tereyağında kızartılmış ekmek üzerinde karides, mayonez, dereotu ve limonla hazırlanan kremalı salata.',
+                        image: 'https://www.mecooks.com/wp-content/uploads/2022/01/IMGL1107-min-scaled.jpg.webp',
+                        time: '20 dk',
+                        servings: '2 Kişilik',
+                        calories: '450 kcal',
+                        ingredients: ['4 dilim tost ekmeği', '200g haşlanmış karides', 'Mayonez', 'Dereotu, limon suyu', 'Tereyağı'],
+                        recipe: ['Tost ekmeğini tereyağında kızartın.', 'Karidesleri mayonez, doğranmış dereotu ve limon suyuyla karıştırın.', 'Karides salatasını kızarmış ekmeğin üzerine bolca koyun.', 'Üzerini bir karides ve dereotu dalı ile süsleyerek servis yapın.']
+                    },
+                    {
+                        id: 'se6',
+                        name: 'Janssons frestelse',
+                        description: 'Krema, soğan ve ançuez ile yapılan, fırınlanmış patates güveci.',
+                        image: 'https://img.koket.se/standard-mega/julens-basta-janssons-frestelse.png.jpg',
+                        time: '60 dk',
+                        servings: '6 Kişilik',
+                        calories: '500 kcal',
+                        ingredients: ['8 adet patates', '2 adet soğan', '1 kutu ançuez', '200ml krema', 'Ekmek kırıntıları, tereyağı'],
+                        recipe: ['Patatesleri kibrit çöpü inceliğinde doğrayın.', 'Soğanları piyazlık doğrayın.', 'Bir fırın kabına katmanlar halinde patates, soğan ve ançuezi dizin.', 'Üzerine krema dökün ve ekmek kırıntıları/tereyağı serpin.', '200 derecede üzeri kızarana kadar pişirin.']
+                    },
+                    {
+                        id: 'se7',
+                        name: 'Prinsesstårta ',
+                        description: 'Vanilya kreması ve ahududu reçeli katmanları arasına konulan yeşil marzipan ile kaplanmış geleneksel İsveç pastası.',
+                        image: 'https://preview.redd.it/dv72mylou7b41.jpg?width=640&crop=smart&auto=webp&s=c8fbf49599e23eef284507e1153b1afe584a9a14',
+                        time: '150 dk',
+                        servings: '12 Dilim',
+                        calories: '480 kcal/dilim',
+                        ingredients: ['Pandispanya keki', 'Vanilyalı krema', 'Ahududu reçeli', 'Krema (çırpılmış)', 'Yeşil marzipan (badem ezmesi)', 'Gül'],
+                        recipe: ['Kek katmanlarını hazırlayın.', 'Katmanların arasına sırasıyla reçel, vanilya kreması ve çırpılmış krema sürün.', 'Pastanın üzerini kubbe şeklinde krema ile kaplayın.', 'Yeşil marzipanı açıp pastanın üzerine örtün.', 'Genellikle kırmızı bir marzipan gül ile süslenir.']
+                    },
+                    {
+                        id: 'se8',
+                        name: 'Raggmunk',
+                        description: 'İnce rendelenmiş patates, yumurta ve un ile yapılan, kızartılmış krep veya gözleme.',
+                        image: 'https://images.services.kitchenstories.io/k15UBwbZCsAS4DOMXL7oGEi7z1E=/3840x0/filters:quality(80)/images.kitchenstories.io/wagtailOriginalImages/R2701-photo-final-3x4_1.jpg',
+                        time: '30 dk',
+                        servings: '4 Adet',
+                        calories: '350 kcal/adet',
+                        ingredients: ['3 adet patates', '2 adet yumurta', '1/2 su bardağı un', 'Süt (gerekirse)', 'Tuz, biber', 'Domuz pastırması ve Lingonberry reçeli (servis için)'],
+                        recipe: ['Patatesleri ince rendeleyin ve suyunu sıkın.', 'Yumurta, un, tuz ve biberle karıştırın.', 'Karışımı tavada ince krep şeklinde kızartın.', 'Geleneksel olarak kızarmış domuz pastırması ve lingonberry reçeli ile servis yapılır.']
+                    },
+                    {
+                        id: 'se9',
+                        name: 'Ärtsoppa ',
+                        description: 'Geleneksel İsveç askeri yemeği; sarı bezelye ve domuz etinden yapılan koyu çorba.',
+                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiibrF5EOUwAWKvUrD-Io5QfMs3IqgAhEkSA&s',
+                        time: '120 dk',
+                        servings: '6 Kişilik',
+                        calories: '400 kcal',
+                        ingredients: ['500g sarı bezelye (kuru)', '250g domuz eti (füme veya kemikli)', '1 adet soğan', 'Mercanköşk', 'Hardal (servis için)'],
+                        recipe: ['Kuru bezelyeyi bir gece önceden ıslatın.', 'Bezelye ve domuz etini tencereye koyun, üzerini suyla kapatın.', 'Soğan ve mercanköşkü ekleyip bezelye yumuşayana kadar pişirin.', 'Servis yaparken hardal ve yanında',]
+                      },
+                  ] 
+               },
+          
+          
+            {
+                id: 'ru',
+                name: 'Rusya',
+                coverImage: 'https://blog.bizimtoptan.com.tr/wp-content/uploads/2024/04/Rus-Mantcsc-Pelmeni-Tarifi-min.jpg', 
+                dishes: [
+                    {
+                        id: 'ru1',
+                        name: 'Borscht',
+                        description: 'Pancar bazlı, ekşi krema (smetana) ile servis edilen geleneksel kırmızı çorba.',
+                        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Borscht_served.jpg/1200px-Borscht_served.jpg',
+                        time: '90 dk',
+                        servings: '6 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['500g et (dana veya domuz)', '3 adet pancar', '2 adet havuç', '1 adet soğan', 'Lahana, patates', 'Sirke, şeker, defne yaprağı', 'Smetana (ekşi krema)'],
+                        recipe: ['Et suyunu hazırlayın.', 'Pancarı rendeleyin, sirke ve şekerle soteleyin (rengini koruması için).', 'Soğan, havuç ve lahanayı ince ince doğrayın.', 'Patatesi küp küp kesin.', 'Tüm sebzeleri et suyuna ekleyip yumuşayana kadar pişirin.', 'Servis yaparken smetana (ekşi krema) ekleyin.']
+                    },
+                    {
+                        id: 'ru2',
+                        name: 'Pelmeni',
+                        description: 'İnce hamur içine et (genellikle dana ve domuz karışımı) doldurulmuş küçük mantılar.',
+                        image: 'https://amoftaste.com/media/2025/08/pelmeni.jpg',
+                        time: '75 dk',
+                        servings: '4 Kişilik',
+                        calories: '450 kcal',
+                        ingredients: ['Hamur için: un, su, yumurta', 'İç harç için: 300g kıyma (dana/domuz)', 'Soğan, sarımsak, baharatlar', 'Tereyağı veya smetana (servis için)'],
+                        recipe: ['Sert bir hamur yoğurun ve incecik açın.', 'Kıymalı harcı hazırlayıp hamurun üzerine küçük porsiyonlar halinde yerleştirin.', 'Hamuru kesin ve mantı şeklinde kapatın.', 'Kaynar tuzlu suda 5-7 dakika pişirin.', 'Tereyağı ve smetana ile sıcak servis yapın.']
+                    },
+                    {
+                        id: 'ru3',
+                        name: 'Beef Stroganoff',
+                        description: 'Kremalı, mantarlı ve ekşi sos içinde ince dilimlenmiş dana eti parçaları.',
+                        image: 'https://www.allrecipes.com/thmb/mSWde3PHTu-fDkbvWBw0D1JlS8U=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/25202beef-stroganoff-iii-ddmfs-3x4-233-0f26fa477e9c446b970a32502468efc6.jpg',
+                        time: '45 dk',
+                        servings: '3 Kişilik',
+                        calories: '600 kcal',
+                        ingredients: ['500g dana biftek (jülyen kesim)', '200g kültür mantarı', '1 adet soğan', '200ml krema', 'Hardal', 'Tereyağı, un'],
+                        recipe: ['Dana etini tereyağında mühürleyin.', 'Soğan ve mantarı ekleyip soteleyin.', 'Hardal, un ve kremayı ekleyip koyulaşana kadar karıştırın.', 'Tuz ve karabiberle tatlandırın.', 'Pirinç veya patates püresi ile servis yapın.']
+                    },
+                    {
+                        id: 'ru4',
+                        name: 'Blini',
+                        description: 'İnce, mayalı Rus krepleri, genellikle smetana, reçel veya havyar ile yenir.',
+                        image: 'https://thewrightbrothers.co.uk/cdn/shop/articles/salmon-canape-recipe_1cace3d2-e073-4cbb-ba35-6fce50d4b4b8.jpg?v=1634631330&width=1000',
+                        time: '30 dk',
+                        servings: '8-10 Adet',
+                        calories: '150 kcal/adet',
+                        ingredients: ['2 su bardağı süt', '2 adet yumurta', '1,5 su bardağı un', '1 paket maya', 'Şeker, tuz', 'Sıvı yağ (kızartma için)'],
+                        recipe: ['Süt, maya, şeker ve tuzu karıştırıp bir süre bekletin.', 'Yumurta ve unu ekleyip çırpın.', 'Krep hamurundan ince ince tavada pişirin.', 'Havyar, smetana veya tatlı dolgularla servis yapın.']
+                    },
+                    {
+                        id: 'ru5',
+                        name: 'Shashlik ',
+                        description: 'Marine edilmiş et (kuzu veya domuz) parçalarının şişte ızgarada pişirilmesi.',
+                        image: 'https://panayirgourmet.com/cdn/shop/files/dana-saslik-522197.jpg?v=1718700885',
+                        time: '120 dk (marine dahil)',
+                        servings: '4 Kişilik',
+                        calories: '700 kcal',
+                        ingredients: ['1 kg kuzu veya domuz eti (küp kesim)', 'Büyük soğan halkaları', 'Sirke veya limon suyu', 'Baharatlar (karabiber, kimyon)'],
+                        recipe: ['Etleri soğan halkaları, sirke/limon suyu ve baharatlarla marine edin (en az 2 saat).', 'Etleri şişe dizin.', 'Kızgın mangalda veya fırında çevirerek pişirin.', 'Taze sebzelerle sıcak servis yapın.']
+                    },
+                    {
+                        id: 'ru6',
+                        name: 'Solyanka',
+                        description: 'Ekşi, baharatlı, kalın ve doyurucu bir Rus çorbası, genellikle salamura ve çeşitli etler içerir.',
+                        image: 'https://valentinascorner.com/wp-content/uploads/2014/03/Solyanka-Soup-Recipe.jpg',
+                        time: '60 dk',
+                        servings: '5 Kişilik',
+                        calories: '400 kcal',
+                        ingredients: ['Et suyu', 'Salamura salatalık', 'Zeytin, kapari', 'Çeşitli et ürünleri (sucuk, sosis)', 'Domates salçası', 'Limon dilimi, smetana (servis için)'],
+                        recipe: ['Et suyunu hazırlayın.', 'Soğan, salça ve salamura salatalığı soteleyin.', 'Doğranmış et ürünleri, zeytin ve kapariyi ekleyip kaynatın.', 'Et suyuna ekleyip bir süre pişirin.', 'Servis yaparken limon dilimi ve smetana ekleyin.']
+                    },
+                    {
+                        id: 'ru7',
+                        name: 'Olivier Salad (Rus Salatası)',
+                        description: 'Mayonez bazlı, küp küp doğranmış patates, havuç, bezelye, salam ve turşu içeren popüler bir salata.',
+                        image: 'https://cdn.momsdish.com/wp-content/uploads/2021/10/Olivier-Potato-Salad-02-24.jpg',
+                        time: '30 dk',
+                        servings: '8 Kişilik',
+                        calories: '280 kcal',
+                        ingredients: ['2 adet haşlanmış patates', '2 adet haşlanmış havuç', '1 su bardağı bezelye (konserve)', 'Salamura turşu', '2 adet haşlanmış yumurta', 'Mayonez'],
+                        recipe: ['Tüm malzemeleri küp küp doğrayın.', 'Geniş bir kapta bezelye ve mayonezle karıştırın.', 'Tuz ve karabiberle tatlandırın.', 'Soğuk servis yapın.']
+                    },
+                    {
+                        id: 'ru8',
+                        name: 'Pirozhki',
+                        description: 'İçine et, lahana veya reçel konulan, fırınlanmış veya kızartılmış küçük mayalı çörekler.',
+                        image: 'https://delishglobe.com/wp-content/uploads/2025/07/pirozhki.png',
+                        time: '90 dk',
+                        servings: '12 Adet',
+                        calories: '200 kcal/adet',
+                        ingredients: ['Hamur için: un, maya, süt, şeker, tuz', 'İç harç: Kıyma, lahana veya patates püresi (isteğe bağlı)'],
+                        recipe: ['Yumuşak mayalı bir hamur yoğurun ve mayalandırın.', 'Hamuru küçük bezeler halinde açın.', 'İç harcı koyup kapatın (genellikle oval şekil verilir).', 'Fırında pişirin veya kızgın yağda kızartın.', 'Sıcak servis yapın.']
+                    },
+                    {
+                        id: 'ru9',
+                        name: 'Medovik',
+                        description: 'İnce katmanlardan oluşan ballı kek, ekşi krema bazlı krema ile katmanlanır.',
+                        image: 'https://cdn.shopify.com/s/files/1/1259/6441/files/dilimlenmis-medovik-pasta.jpg?v=1716208594',
+                        time: '180 dk (dinlenme dahil)',
+                        servings: '10 Dilim',
+                        calories: '450 kcal/dilim',
+                        ingredients: ['Kek katmanları için: un, bal, tereyağı, yumurta', 'Krema için: ekşi krema (smetana), pudra şekeri', 'Ceviz (süsleme için)'],
+                        recipe: ['Bal, şeker ve tereyağını benmari usulü eritin.', 'Yumurta ve unu ekleyip ince katmanlar halinde fırında pişirin.', 'Ekşi krema ve pudra şekerini çırparak krema yapın.', 'Kek katmanlarını krema ile birleştirin.', 'Buzdolabında en az 2 saat dinlendirip servis yapın.']
+                    },
+                ]
+            },
+                  
+           
+            {
+                id: 'kr',
+                name: 'Güney Kore',
+                coverImage: 'https://images.unsplash.com/photo-1580651315530-69c8e0026377?auto=format&fit=crop&q=80&w=800',
+                dishes: [
+                    {
+                        id: 'kr1',
+                        name: 'Bibimbap',
+                        description: 'Rengarenk sebzeler, et, yumurta ve acı biber soslu pilav kasesi.',
+                        image: 'https://images.unsplash.com/photo-1580651315530-69c8e0026377?auto=format&fit=crop&q=80&w=800',
+                        time: '45 dk',
+                        servings: '1 Kişilik',
+                        calories: '550 kcal',
+                        ingredients: ['Pirinç', 'Ispanak', 'Soya filizi', 'Dana kıyma', 'Yumurta', 'Gochujang (Acı Kore Salçası)', 'Susam yağı'],
+                        recipe: ['Pirinci haşlayıp kaseye alın.', 'Sebzeleri ayrı ayrı susam yağında hafifçe soteleyin.', 'Kıymayı soya sosu ve sarımsakla kavurun.', 'Tüm malzemeleri pilavın üzerine estetik şekilde dizin.', 'En üste sahanda yumurtayı ekleyip Gochujang sosu ile servis yapın.']
+                    },
+                    {
+                        id: 'kr2',
+                        name: 'Bulgogi',
+                        description: 'İnce dilimlenmiş, soya soslu marine dana eti ızgarası.',
+                        image: 'https://images.food52.com/CAFKbmiHMu2bM0kpvlZM3B4IU-A=/1d5da97f-32ff-4f50-8e40-77d884b1b0d7--Bulgogi_Kimchimari.jpg',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '400 kcal',
+                        ingredients: ['300g Dana antrikot (ince dilim)', 'Soya sosu', 'Armut rendesi', 'Sarımsak', 'Taze soğan', 'Susam'],
+                        recipe: ['Eti; soya sosu, şeker, sarımsak ve armut rendesiyle 1 saat marine edin.', 'Kızgın tavada veya ızgarada etleri yüksek ateşte pişirin.', 'Üzerine susam ve taze soğan serperek pilavla servis edin.']
+                    },
+                    {
+                        id: 'kr3',
+                        name: 'Kimchi Jjigae',
+                        description: 'Acılı lahana turşusu (Kimchi) yahnisi.',
+                        image: 'https://www.koreanbapsang.com/wp-content/uploads/2014/03/DSC5897-2-e1742780436647.jpg',
+                        time: '40 dk',
+                        servings: '2 Kişilik',
+                        calories: '300 kcal',
+                        ingredients: ['Fermente Kimchi', 'Domuz eti veya ton balığı', 'Tofu', 'Yeşil soğan', 'Gochugaru (biber tozu)'],
+                        recipe: ['Eti ve kimchiyi kavurun.', 'Su ekleyip kaynatın.', 'Tofu ve soğanları ekleyip pişirin.']
+                    },
+                    {
+                        id: 'kr4',
+                        name: 'Tteokbokki',
+                        description: 'Acı soslu pirinç keki.',
+                        image: 'https://tiffanyangela.com/wp-content/uploads/2020/09/Tteokbokki-8-scaled.jpg',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '450 kcal',
+                        ingredients: ['Pirinç kekleri (Garaetteok)', 'Balık keki', 'Gochujang', 'Haşlanmış yumurta'],
+                        recipe: ['Sosu suyla açıp kaynatın.', 'Pirinç keklerini atıp yumuşayana kadar pişirin.', 'Balık keki ve yumurta ekleyin.']
+                    },
+                    {
+                        id: 'kr5',
+                        name: 'Kimbap',
+                        description: 'Kore usulü pirinç rulosu (Sushi benzeri ama pişmiş malzemeli).',
+                        image: 'https://www.seriouseats.com/thmb/WtcBGMWbdUcAIVe8zg4VCm2aqc4=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__2020__01__20200122-gimbap-vicky-wasik-24-f5ed1075f35846a29e0812ee053a1bf8.jpg',
+                        time: '45 dk',
+                        servings: '4 Rulo',
+                        calories: '300 kcal/rulo',
+                        ingredients: ['Nori', 'Pirinç', 'Danmuji (turp turşusu)', 'Ispanak', 'Havuç', 'Yumurta'],
+                        recipe: ['Pirinci susam yağıyla tatlandırın.', 'Nori üzerine pirinci yayın.', 'Malzemeleri şerit halinde koyup sarın.']
+                    },
+                    {
+                        id: 'kr6',
+                        name: 'Japchae',
+                        description: 'Tatlı patates nişastasından yapılan sebzeli cam erişte.',
+                        image: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Polish_Korean_Cuisine_and_Culture_Exchanges_Gradmother%E2%80%99s_Recipes_05.jpg',
+                        time: '40 dk',
+                        servings: '3 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Cam erişte (Dangmyeon)', 'Ispanak', 'Mantar', 'Havuç', 'Soya sosu', 'Şeker'],
+                        recipe: ['Erişteyi haşlayın.', 'Sebzeleri ayrı ayrı soteleyin.', 'Hepsini sosla harmanlayın.']
+                    },
+                    {
+                        id: 'kr7',
+                        name: 'Galbi',
+                        description: 'Marine edilmiş ızgara kaburga.',
+                        image: 'https://www.allrecipes.com/thmb/z_eZq4UxcfrRjn0M1vZj-8pS4CI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/141268-KoreanBBQGalbi-ddmfs-4X3-0566-95426db597ae4191b9f9e527c743cf53.jpg',
+                        time: '60 dk',
+                        servings: '2 Kişilik',
+                        calories: '600 kcal',
+                        ingredients: ['Dana kaburga', 'Soya sosu', 'Esmer şeker', 'Sarımsak', 'Soğan suyu'],
+                        recipe: ['Kaburgaları sosla bir gece marine edin.', 'Izgarada pişirin.']
+                    },
+                    {
+                        id: 'kr8',
+                        name: 'Hotteok',
+                        description: 'İçi tarçınlı ve kuruyemişli tatlı sokak gözlemesi.',
+                        image: 'https://i0.wp.com/koremutfagi101.com/wp-content/uploads/2021/02/DJI_0353.jpg?resize=1024%2C768&ssl=1',
+                        time: '45 dk',
+                        servings: '6 Adet',
+                        calories: '250 kcal/adet',
+                        ingredients: ['Mayalı hamur', 'Esmer şeker', 'Tarçın', 'Fıstık içi'],
+                        recipe: ['Hamurdan parça koparıp içine şekerli karışımı koyun.', 'Tavada bastırarak kızartın.']
+                    },
+                    {
+                        id: 'kr9',
+                        name: 'Samgyeopsal',
+                        description: 'Izgara domuz (veya dana) göbek eti, marul ile yenir.',
+                        image: 'https://cdn.shopify.com/s/files/1/0557/4269/3571/files/shutterstock_1859012482_1024x1024.jpg?v=1716389441',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '500 kcal',
+                        ingredients: ['Yağlı et dilimleri', 'Ssamjang sosu', 'Marul', 'Sarımsak', 'Yeşil biber'],
+                        recipe: ['Etleri masadaki ızgarada pişirin.', 'Marulun içine et, sos ve sarımsak koyup dürüm yapın.']
+                    }           
+    
+                ]
+            },
+            {
+                id: 'lb',
+                name: 'Lübnan',
+                coverImage: 'https://hips.hearstapps.com/hmg-prod/images/falafel-index-64e613f5e0f10.jpg?crop=0.888888888888889xw:1xh;center,top&resize=1200:*',
+                dishes: [
+                    {
+                        id: 'lb1',
+                        name: 'Falafel',
+                        description: 'Nohut ve taze otlarla yapılan çıtır köfteler.',
+                        image: 'https://assets.epicurious.com/photos/573cca734ac8eccb33ac2c8c/1:1/w_2560%2Cc_limit/shutterstock_191272382.jpg',
+                        time: '40 dk',
+                        servings: '4 Kişilik',
+                        calories: '330 kcal',
+                        ingredients: ['2 su bardağı nohut (geceden ıslatılmış)', 'Maydanoz', 'Kişniş', 'Soğan', 'Sarımsak', 'Kimyon'],
+                        recipe: ['Islanmış nohutları ve yeşillikleri robottan geçirin (püre yapmayın, pütürlü kalsın).', 'Baharatları ekleyip yoğurun ve 1 saat dolapta bekletin.', 'Ceviz büyüklüğünde toplar yapıp derin yağda kızartın.', 'Tahin sos ile sıcak servis yapın.']
+                    },
+                    {
+                        id: 'lb2',
+                        name: 'Tabbouleh',
+                        description: 'İnce bulgur ve bol maydanozlu ferahlatıcı salata.',
+                        image: 'https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fill,g_auto,w_1500,ar_3:2/tk%2Fphoto%2F2025%2F07-2025%2F2025-07-tabbouleh%2Ftabbouleh-168',
+                        time: '20 dk',
+                        servings: '4 Kişilik',
+                        calories: '150 kcal',
+                        ingredients: ['2 demet maydanoz', '1 çay bardağı ince bulgur', 'Taze nane', 'Domates', 'Limon suyu', 'Zeytinyağı'],
+                        recipe: ['Bulguru sıcak suyla şişirin.', 'Maydanoz ve naneyi çok ince kıyın.', 'Domatesleri küp küp doğrayın.', 'Tüm malzemeleri bol limon ve zeytinyağı ile harmanlayın.']
+                    
+                
+                    },
+                    {
+                        id: 'lb3',
+                        name: 'Humus',
+                        description: 'Nohut ve tahin ezmesi.',
+                        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1BNCOxChrJeIg24MP6z_pvHCqNdWOrfQo-g&s',
+                        time: '15 dk',
+                        servings: '4 Kişilik',
+                        calories: '180 kcal',
+                        ingredients: ['Haşlanmış nohut', 'Tahin', 'Limon suyu', 'Sarımsak', 'Kimyon', 'Zeytinyağı'],
+                        recipe: ['Tüm malzemeleri pürüzsüz olana kadar robottan geçirin.', 'Üzerine zeytinyağı ve sumak dökün.']
+                    },
+                    {
+                        id: 'lb4',
+                        name: 'Kibbeh (İçli Köfte)',
+                        description: 'Bulgur dış katmanlı, kıyma dolgulu kızarmış köfte.',
+                        image: 'https://www.thespruceeats.com/thmb/KlsigrSz_lIN8bxtVPCRY-fTXVM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/easy-beginner-kibbeh-recipe-2355367-hero-01-931e79e7e5be42f6bad05ac61f018b42.jpg',
+                        time: '60 dk',
+                        servings: '6 Adet',
+                        calories: '300 kcal/adet',
+                        ingredients: ['İnce bulgur', 'Kıyma', 'Soğan', 'Ceviz', 'Baharatlar'],
+                        recipe: ['Dış harcı için bulgur ve kıymayı yoğurun.', 'İç harcı kavurun.', 'Şekil verip içini doldurun ve kızartın.']
+                    },
+                    {
+                        id: 'lb5',
+                        name: 'Shawarma',
+                        description: 'Lübnan usulü döner.',
+                        image: 'https://rms-media-prod.generalmills.com/51185cec-b4c6-4fbd-965c-4fda7d85a30b.jpg',
+                        time: '40 dk',
+                        servings: '2 Kişilik',
+                        calories: '500 kcal',
+                        ingredients: ['Tavuk veya et', 'Lavaş', 'Sarımsak sosu (Toum)', 'Turşu'],
+                        recipe: ['Eti baharatlarla marine edip pişirin.', 'Lavaşa sos sürüp et ve turşuyla dürüm yapın.']
+                    },
+                    {
+                        id: 'lb6',
+                        name: 'Fattoush',
+                        description: 'Kızarmış ekmek parçalı mevsim salatası.',
+                        image: 'https://ca-times.brightspotcdn.com/dims4/default/87cfb40/2147483647/strip/true/crop/2843x1777+0+59/resize/1200x750!/quality/75/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fdb%2F2c%2F160379e74d308c8e18ad544fafca%2F2435098-fo-studioshoot12-ac.jpg',
+                        time: '15 dk',
+                        servings: '2 Kişilik',
+                        calories: '200 kcal',
+                        ingredients: ['Marul, domates, salatalık', 'Turp', 'Kızarmış pide', 'Sumak', 'Nar ekşisi'],
+                        recipe: ['Sebzeleri iri doğrayın.', 'Kızarmış ekmekleri ekleyin.', 'Nar ekşili sosu dökün.']
+                    },
+                    {
+                        id: 'lb7',
+                        name: 'Babagannuş',
+                        description: 'Közlenmiş patlıcan mezesi.',
+                        image: 'https://lezzetlivebilgili.com/wp-content/uploads/2021/08/babagannus-tarifi.jpeg',
+                        time: '30 dk',
+                        servings: '4 Kişilik',
+                        calories: '120 kcal',
+                        ingredients: ['Patlıcan', 'Tahin', 'Limon', 'Sarımsak', 'Zeytinyağı'],
+                        recipe: ['Patlıcanı közleyip ezin.', 'Tahin ve limonla karıştırın.']
+                    },
+                    {
+                        id: 'lb8',
+                        name: 'Manakish',
+                        description: 'Zaatar (kekik karışımı) soslu Lübnan pizzası.',
+                        image: 'https://theodehlicious.com/wp-content/uploads/2022/10/Cheese-Manakish.jpg',
+                        time: '30 dk',
+                        servings: '2 Kişilik',
+                        calories: '300 kcal',
+                        ingredients: ['Hamur', 'Zaatar baharatı', 'Zeytinyağı'],
+                        recipe: ['Hamuru açın.', 'Zeytinyağı ve zaatarı karıştırıp üzerine sürün.', 'Fırınlayın.']
+                    },
+                    {
+                        id: 'lb9',
+                        name: 'Mujadara',
+                        description: 'Mercimek ve bulgur pilavı, karamelize soğanlı.',
+                        image: 'https://static01.nyt.com/images/2025/05/15/multimedia/ND-Mujadara-kzgm/ND-Mujadara-kzgm-mediumSquareAt3X.jpg',
+                        time: '45 dk',
+                        servings: '4 Kişilik',
+                        calories: '350 kcal',
+                        ingredients: ['Yeşil mercimek', 'Pirinç veya bulgur', 'Kuru soğan', 'Zeytinyağı'],
+                        recipe: ['Mercimeği haşlayın.', 'Bulguru ekleyip pişirin.', 'Soğanları karamelize olana kadar kavurup üzerine dökün.']
+                    }
+                      
+              
+                ]
+            }
+           
+               
+       ];
+
+
+
+        // --- 2. UYGULAMA DURUM YÖNETİMİ ---
+        let currentView = 'home';
+        let selectedCountry = null;
+        let selectedDish = null;
+
+        const appContainer = document.getElementById('app-container');
+        const backBtn = document.getElementById('back-btn');
+
+        // İkon güncelleme 
+        function updateIcons() {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // Geri butonunu 
+        function toggleBackBtn() {
+            currentView === 'home' ? backBtn.classList.add('hidden') : backBtn.classList.remove('hidden');
+        }
+
+       
+
+        // Anasayfaya git
+        function goHome() {
+            currentView = 'home';
+            selectedCountry = null;
+            selectedDish = null;
+            renderHome();
+            toggleBackBtn();
+        }
+
+        // Geri git 
+        function goBack() {
+            if (currentView === 'recipe') {
+                goToCountry(selectedCountry);
+            } else {
+                goHome();
+            }
+        }
+
+        // Ülke sayfasına git
+        function goToCountry(country) {
+            selectedCountry = country;
+            currentView = 'country';
+            renderCountryPage();
+            toggleBackBtn();
+            window.scrollTo(0, 0);
+        }
+
+        // Tarif sayfasına git
+        function goToRecipe(dish) {
+            selectedDish = dish;
+            currentView = 'recipe';
+            renderRecipePage();
+            toggleBackBtn();
+            window.scrollTo(0, 0);
+        }
+
+        // (RENDER)  ---
+
+        // A. Anasayfa Oluşturucu
+        function renderHome() {
+            let html = `
+                <div class="animate-fade-in-up">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4">Bugün Nereye Gidiyoruz?</h2>
+                        <p class="text-lg text-gray-600">Keşfetmek istediğin mutfağın kutusuna tıkla.</p>
+                    </div>
+                    <!-- Rastgele Tarif Butonu -->
+                    <button onclick="rastgeleTarif()" class="random-btn">
+                    🍽️ Beni Şaşırt – Rastgele Tarif
+                    </button>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            `;
+
+            countriesData.forEach((country) => {
+                html += `
+                    <div onclick="handleCountryClick('${country.id}')" 
+                         class="relative bg-white rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden group border-2 border-transparent hover:border-orange-300">
+                        
+                        <!-- Arka Plan Yemek Görseli -->
+                        <div class="absolute inset-0 z-0">
+                            <img src="${country.coverImage}" class="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                        </div>
+
+                        <!-- Kart İçeriği -->
+                        <div class="relative z-10 h-48 flex flex-col items-center justify-end pb-4 p-4 text-center">
+                            <img src="https://flagcdn.com/w160/${country.id}.png" alt="${country.name}" 
+                                 class="w-24 h-16 object-cover rounded-md shadow-lg mb-3 transform group-hover:scale-110 transition-transform duration-300 border-2 border-white/50 flag-shadow"/>
+                            <h3 class="font-bold text-xl text-white mb-1 shadow-black drop-shadow-md">${country.name}</h3>
+                            <span class="text-xs font-semibold text-orange-100 uppercase tracking-wider bg-black/40 px-2 py-1 rounded-full backdrop-blur-sm">
+                                ${country.dishes.length} Tarif
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            appContainer.innerHTML = html;
+            updateIcons();
+        }
+
+        function rastgeleTarif() {
+            
+            const dishes = countriesData.flatMap(country => country.dishes);
+           
+            const randomIndex = Math.floor(Math.random() * dishes.length);
+            
+            goToRecipe(dishes[randomIndex]);
+        }
+
+        // B. Ülke Detay 
+        function renderCountryPage() {
+            if (!selectedCountry) return;
+
+            let html = `
+                <div class="animate-fade-in-up">
+                    <div class="flex items-center gap-6 mb-8 border-b-2 border-orange-200 pb-6">
+                        <img src="https://flagcdn.com/w320/${selectedCountry.id}.png" 
+                             class="h-20 w-auto rounded-lg shadow-md border-2 border-orange-100" 
+                             alt="${selectedCountry.name}">
+                        <div>
+                            <h2 class="text-4xl font-bold text-gray-800">${selectedCountry.name} Mutfağı</h2>
+                            <p class="text-gray-600">En popüler geleneksel lezzetler</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            `;
+
+            selectedCountry.dishes.forEach(dish => {
+                html += `
+                    <div onclick="handleRecipeClick('${dish.id}')" 
+                         class="bg-white rounded-3xl shadow-lg overflow-hidden cursor-pointer group hover:shadow-2xl transition-all duration-300">
+                        <div class="relative h-56 overflow-hidden">
+                            <img src="${dish.image}" alt="${dish.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://placehold.co/800x600?text=Yemek+Fotografi'">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                                <span class="text-white font-medium flex items-center gap-2">
+                                    <i data-lucide="utensils" size="18"></i> Tarifi Gör
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-2xl font-bold text-gray-800 group-hover:text-orange-600 transition-colors">${dish.name}</h3>
+                            </div>
+                            <p class="text-gray-500 line-clamp-2 mb-4">${dish.description}</p>
+                            
+                            <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <div class="flex items-center gap-1">
+                                    <i data-lucide="clock" class="text-orange-500 w-4 h-4"></i>
+                                    ${dish.time}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i data-lucide="flame" class="text-red-500 w-4 h-4"></i>
+                                    ${dish.calories}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            appContainer.innerHTML = html;
+            updateIcons();
+        }
+
+        //  Tarif Sayfası 
+        function renderRecipePage() {
+            if (!selectedDish) return;
+
+            let ingredientsHtml = selectedDish.ingredients.map(item => `
+                <li class="flex items-start gap-3 text-gray-700 border-b border-gray-100 pb-2 last:border-0">
+                    <div class="w-2 h-2 mt-2 rounded-full bg-orange-400 flex-shrink-0"></div>
+                    <span>${item}</span>
+                </li>
+            `).join('');
+
+            let stepsHtml = selectedDish.recipe.map((step, index) => `
+                <div class="flex gap-4 group">
+                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-lg group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                        ${index + 1}
+                    </div>
+                    <p class="text-gray-700 leading-relaxed mt-1">${step}</p>
+                </div>
+            `).join('');
+
+            let html = `
+                <div class="animate-fade-in-up bg-white rounded-3xl shadow-2xl overflow-hidden max-w-4xl mx-auto">
+                    <div class="relative h-80 md:h-96">
+                        <img src="${selectedDish.image}" alt="${selectedDish.name}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/800x600?text=Yemek+Fotografi'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 p-8 text-white">
+                            <h2 class="text-5xl font-bold mb-2 shadow-black drop-shadow-lg">${selectedDish.name}</h2>
+                            <p class="text-xl text-gray-200">${selectedDish.description}</p>
+                        </div>
+                    </div>
+
+                    <div class="p-8">
+                        <!-- Tarif Bilgileri -->
+                        <div class="flex flex-wrap gap-6 mb-8 p-4 bg-orange-50 rounded-2xl border border-orange-100">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-white p-2 rounded-full shadow-sm text-orange-500"><i data-lucide="clock" class="w-6 h-6"></i></div>
+                                <div><p class="text-xs text-gray-500 uppercase font-bold">Süre</p><p class="font-semibold">${selectedDish.time}</p></div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="bg-white p-2 rounded-full shadow-sm text-orange-500"><i data-lucide="users" class="w-6 h-6"></i></div>
+                                <div><p class="text-xs text-gray-500 uppercase font-bold">Porsiyon</p><p class="font-semibold">${selectedDish.servings}</p></div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="bg-white p-2 rounded-full shadow-sm text-orange-500"><i data-lucide="flame" class="w-6 h-6"></i></div>
+                                <div><p class="text-xs text-gray-500 uppercase font-bold">Kalori</p><p class="font-semibold">${selectedDish.calories}</p></div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-12">
+                            <div class="md:col-span-1">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                    <span class="bg-orange-100 text-orange-600 p-1 rounded"><i data-lucide="utensils" class="w-5 h-5"></i></span>
+                                    Malzemeler
+                                </h3>
+                                <ul class="space-y-3">${ingredientsHtml}</ul>
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                    <span class="bg-orange-100 text-orange-600 p-1 rounded"><i data-lucide="chef-hat" class="w-5 h-5"></i></span>
+                                    Tarif Adımları
+                                </h3>
+                                <div class="space-y-6">${stepsHtml}</div>
+                                
+                                <div class="mt-10 p-6 bg-red-50 rounded-xl border border-red-100 text-center">
+                                    <div class="flex justify-center mb-2"><i data-lucide="heart" class="text-red-500 w-8 h-8 animate-bounce"></i></div>
+                                    <h4 class="text-red-800 font-bold text-lg">Afiyet Olsun!</h4>
+                                    <p class="text-red-600 text-sm">Bu lezzetli tarifi denediğiniz için teşekkürler.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            appContainer.innerHTML = html;
+            updateIcons();
+        }
+
+        // ---  (Global Erişim İçin) ---
+        window.handleCountryClick = (id) => {
+            const country = countriesData.find(c => c.id === id);
+            if (country) goToCountry(country);
+        };
+
+        window.handleRecipeClick = (id) => {
+            let dish = null;
+            if (selectedCountry) {
+                dish = selectedCountry.dishes.find(d => d.id === id);
+            }
+            if (dish) goToRecipe(dish);
+        };
+
+        // --- 6. UYGULAMAYI BAŞLAT ---
+        renderHome();
+
+    </script>
+</body>
+
+</html>
