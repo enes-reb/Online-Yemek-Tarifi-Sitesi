@@ -15,3 +15,6 @@ basit ve kullanıcı dostu bir web sitesidir.
 
 ## 📄 Lisans
 Bu proje MIT Lisansı ile lisanslanmıştır.
+
+## 👨‍💻 Geliştirici
+**Enes Coşkun**  
